@@ -38,6 +38,9 @@ function stepTarget(st: { tool: string; target: string }): string {
   return st.target.replace(/^https?:\/\//, '').slice(0, 60)
 }
 
+/** The page agent handoff line ("[[do]]", see main/ai.ts) or the start of it, while an Ask reply streams in. */
+const HANDOFF_TAIL = /\s*\[(\[(d(o(\]\]?)?)?)?)?$/
+
 function UserMsg({ children }: { children: ReactNode }) {
   return <div className="ai-msg ai-msg-user">{children}</div>
 }
@@ -125,6 +128,11 @@ export function AiPanel({ s }: { s: AppState }) {
   useEffect(() => {
     if (enabled && ai.available === null) call('aiStatus')
   }, [enabled, ai.available])
+  // Ask hands tasks ("delete my posts") to the page agent: follow the new run to its tab.
+  const runSince = s.pageAgent?.since
+  useEffect(() => {
+    if (runSince) setMode('do')
+  }, [runSince])
   const canClear = mode === 'ask' ? ai.messages.length > 0 || !!ai.tidy?.length : !!s.pageAgent && !s.pageAgent.running
 
   return (
@@ -224,7 +232,7 @@ function Ask({ s }: { s: AppState }) {
               m.role === 'user' ? (
                 <UserMsg key={i}>{m.content}</UserMsg>
               ) : (
-                <AiMsg key={i} text={m.content} working={ai.busy && i === ai.messages.length - 1} label="Thinking" />
+                <AiMsg key={i} text={ai.busy && i === ai.messages.length - 1 ? m.content.replace(HANDOFF_TAIL, '') : m.content} working={ai.busy && i === ai.messages.length - 1} label="Thinking" />
               )
             )}
             {ai.tidy && ai.tidy.length > 0 && (

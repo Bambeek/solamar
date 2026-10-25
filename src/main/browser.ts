@@ -57,7 +57,7 @@ import type {
 } from '@shared/types'
 import { accelerator, boostCss, boostMatches, firefoxUserAgent, frameColors, GOOGLE_SIGN_IN_HOSTS, hostOf, isEmptyBoost, normalizeAccelerator, siteOf, toNavigable, uid } from '@shared/util'
 import { AdBlock } from './adblock'
-import { PAGE_TEXT_LIMIT, askPrompt, parseTidy, summarizePrompt, tidyPrompt, type ChatMessage } from './ai'
+import { PAGE_TEXT_LIMIT, askPrompt, parseTidy, splitHandoff, summarizePrompt, tidyPrompt, type ChatMessage } from './ai'
 import { AgentHost } from './agent'
 import { AGENT_WORLD, applyFieldJs, fieldJs, type FieldInfo } from './agent-dom'
 import { anthropicWebAnswer, claudeCodeWebAnswer, cleanEdit, cleanQuery, linksIn, localAnswerPrompt, looksLikeQuestion, replyPrompt, rewritePrompt, type WriteAction, writePrompt } from './assist'
@@ -2543,6 +2543,11 @@ export class Browser {
     const reply = { role: 'assistant' as const, content: '' }
     this.ai.messages.push(reply)
     await this.stream('ask', askPrompt(page?.title ?? '', page?.url ?? '', page ? wrapUntrusted(page.text, hostOf(page.url)) : '', history, q), reply)
+    // A task, not a question ("delete my posts"): the page agent does it instead of Ask listing steps to do by hand.
+    const { text, handoff } = splitHandoff(reply.content)
+    if (!handoff) return
+    reply.content = text
+    void this.agentRun(q)
   }
 
   async aiTidy(): Promise<void> {

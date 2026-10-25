@@ -35,6 +35,7 @@ const api = createServer((req, res) => {
     }
     const b = JSON.parse(body)
     requests.push(b)
+    if (!b.tools && JSON.stringify(b.messages).includes('Delete my posts')) return sse(res, b.model, [{ type: 'text', text: 'The page agent is taking over.\n[[do]]' }], 'end_turn') // Ask
     if (!b.tools) return sse(res, b.model, [{ type: 'text', text: 'Thanks, Friday works for me.' }], 'end_turn') // reply draft
     if (slow) return setTimeout(() => sse(res, b.model, [{ type: 'text', text: 'late' }], 'end_turn'), 8000)
     const tab = /tab "([^"]+)"/.exec(b.system)?.[1]
@@ -122,6 +123,20 @@ const shown = await ui.locator('.ai-thread .ai-msg-user').allInnerTexts().catch(
 check('the panel shows both requests', shown.length === 2 && shown[0].includes('Ada Lovelace'), JSON.stringify(shown))
 await call('agentClear')
 check('New conversation forgets it', (await state()).pageAgent === null)
+
+// A task typed into Ask goes to the page agent instead of a list of steps to do by hand.
+await ui.getByRole('tab', { name: 'Ask' }).click()
+const askSent = requests.length
+await ui.evaluate(() => void window.solamar.call('aiAsk', 'Delete my posts about Solamar'))
+s = await until(async () => {
+  const st = await state()
+  return st.pageAgent?.task === 'Delete my posts about Solamar' && !st.pageAgent.running ? st : null
+}, 20000)
+check('Ask hands a task to the page agent', !!s && !s.pageAgent.error && !!requests[askSent + 1]?.tools, JSON.stringify(s?.pageAgent?.error))
+check('the Ask reply keeps no handoff marker', s?.ai.messages.at(-1)?.content === 'The page agent is taking over.', JSON.stringify(s?.ai.messages.at(-1)))
+check('the panel follows it to Do it for me', (await ui.getByRole('tab', { name: 'Do it for me' }).getAttribute('aria-selected')) === 'true')
+check('the Ask prompt tells the model about the page agent', JSON.stringify(requests[askSent]).includes('[[do]]'))
+await call('agentClear')
 
 // Stop
 slow = true

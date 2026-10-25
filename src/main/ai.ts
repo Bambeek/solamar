@@ -60,6 +60,15 @@ export async function* ollamaChat(
 
 export const PAGE_TEXT_LIMIT = 12_000
 
+/** The last line of an Ask reply when the request is a task for the page agent, not a question. */
+export const HANDOFF = '[[do]]'
+
+/** The reply without the handoff line, and whether it had one. */
+export function splitHandoff(reply: string): { text: string; handoff: boolean } {
+  const text = reply.replace(/\s*\[\[do\]\]\s*$/, '')
+  return { text, handoff: text !== reply }
+}
+
 export function summarizePrompt(title: string, url: string, text: string): ChatMessage[] {
   return [
     {
@@ -78,7 +87,10 @@ export function askPrompt(title: string, url: string, text: string, history: Cha
       role: 'system',
       content:
         'You answer questions about the web page below. Use only the page text; say so when the page does not contain the answer. ' +
-        'Be brief. Answer in the language of the question.\n\n' +
+        'Be brief. Answer in the language of the question.\n' +
+        'You cannot click or type, but Solamar has a page agent that can. When the user asks you to do something rather than ' +
+        'to explain it (click, fill in, post, send, delete, buy, book), never give steps to do by hand: write one short ' +
+        `sentence saying the page agent is taking over, then a last line with only ${HANDOFF}.\n\n` +
         `Page: ${title}\nURL: ${url}\n\n${text}`
     },
     ...history.filter((m) => m.role !== 'system'),
