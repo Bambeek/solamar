@@ -8,7 +8,7 @@ site/
   index.html      the page
   styles.css      all styles: night harbour in dark mode, comic paper in light mode (follows the system setting)
   brand.js        BRAND config: name, download link, source link, MCP port
-  main.js         fills the page from BRAND, copy button, Arc countdown, time-of-day sky, hero depth
+  main.js         fills the page from BRAND, copy button, Arc countdown, the screenshot tour
   icon.svg        app icon (copy of build/icon.svg)
   assets/         screenshots of the app's own UI (WebP), the Inter and Barlow Condensed fonts (OFL, licences included)
   assets/comic/   the illustrations (WebP)
@@ -16,8 +16,8 @@ site/
   deploy.sh       puts the page on the WSBusinesslab dedi (https://solamar.app); nginx-solamar.app.conf is its vhost
 ```
 
-The page uses `window-dark.webp`, `window-light.webp` and `agent.webp` from the app screenshots; the others in
-`assets/` come from `screens-app.mjs` and are not on the page at the moment.
+The hero and the tour show real screenshots of the app from `screens-app.mjs` (made-up local pages in a real
+window); the hero's window has an ordinary article open, so it reads as a browser rather than an illustration.
 
 ## Illustrations
 
@@ -25,10 +25,8 @@ Everything in `assets/comic/` was generated locally with ComfyUI (Qwen Image 2.1
 style, thick black outlines, no text in the pictures. Props and icons were generated on a plain grey background
 and cut out; floor shadows became translucent black so they sit on both themes.
 
-The hero picks its sky from the visitor's clock: `bg-morning.webp` (5 to 9), `bg-day.webp` (9 to 17),
-`bg-evening.webp` (17 to 20) and `bg-night.webp` (the rest, and the default before the script runs). The other
-three were edited from the night picture, so the skyline stays the same. Add `?sky=day` (or `morning`, `evening`,
-`night`) to the URL to see one.
+The footer's skyline strip uses `bg-night.webp` (dark) and `bg-day.webp` (light). The other backgrounds and the
+props (lighthouse, crane, boxes) illustrate the made-up pages in `screens-app.mjs`.
 
 ## Preview
 
@@ -72,9 +70,8 @@ disappear. Set `repoUrl` to show a "Source" link in the footer once the code is 
 node site/screens.mjs
 ```
 
-Writes full-page shots `site/screens/{1440,390}-{light,dark}.png` and hero shots
-`site/screens/hero-{1440,390}-{light,dark}-{sky}.png` for the night and day skies (pass sky names to choose:
-`node site/screens.mjs morning evening`). Reports console errors, failed requests and horizontal overflow. It uses
+Writes full-page shots `site/screens/{1440,390}-{light,dark}.png` and first-screen shots
+`site/screens/hero-{1440,390}-{light,dark}.png`. Reports console errors, failed requests and horizontal overflow. It uses
 Playwright's Chromium if installed, otherwise the Edge or Chrome already on the PC.
 
 Sections rise in through CSS scroll-driven animations (`animation-timeline: view()`), so a full-page shot shows

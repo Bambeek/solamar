@@ -1,5 +1,5 @@
 /* Solamar landing page. Night harbour by default, comic paper in light mode.
-   Layout: a full-bleed illustrated harbour hero, then calm sections on a sea-blue (or paper) ground.
+   Layout: the real app under a short title, then calm sections on a sea-blue (or paper) ground; the comic art lives there.
    Type: Barlow Condensed in capitals for headings, Inter for everything else. Accent: sunrise orange and sea teal. */
 
 @font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/barlow-condensed-600.woff2) format('woff2'); }
@@ -131,7 +131,7 @@ kbd {
 .h3 { font: 900 clamp(28px, 3vw, 36px)/1 var(--display); text-transform: uppercase; }
 .sec { padding: clamp(56px, 8vw, 96px) 0 0; }
 .sec > .wrap > .h2 { margin-bottom: 28px; }
-.hero-shot + .sec { padding-top: clamp(64px, 8vw, 100px); }
+.hero + .sec { padding-top: clamp(64px, 8vw, 100px); }
 .sec-lead { color: var(--text-2); max-width: 640px; margin: -12px 0 28px; font-size: 17px; }
 
 /* Buttons: one solid sunrise button for downloads, a quiet outline for everything else. */
@@ -247,180 +247,40 @@ kbd {
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
-  min-height: clamp(640px, 92vh, 860px);
   display: grid;
-  place-items: center;
-  overflow: hidden;
+  justify-items: center;
+  gap: clamp(28px, 4vw, 44px);
+  padding: 112px 0 0;
   isolation: isolate;
   color: #fff;
 }
-.scene { position: absolute; inset: 0; z-index: -1; }
-.skyline {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 70%;
-  transform: scale(1.06);
-  transition: opacity .8s;
-  /* a soft, muted backdrop so the sharp props and the title stand in front of it */
-  filter: blur(1.2px) saturate(.85) brightness(.9);
-}
-.hero[data-sky="morning"] .skyline, .hero[data-sky="evening"] .skyline { filter: blur(1.6px) saturate(.8) brightness(.72); }
-.hero[data-sky="day"] .skyline { filter: blur(1.8px) saturate(.75) brightness(.62); }
-/* The scene follows the visitor's clock: a tint and, at night, twinkling stars on top of the picture. */
-.sky { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light; transition: background .8s; }
-.hero[data-sky="morning"] .sky { background: linear-gradient(180deg, rgba(255, 150, 120, .55), rgba(255, 210, 160, .25) 60%, transparent); }
-.hero[data-sky="day"] .sky { background: linear-gradient(180deg, rgba(120, 190, 255, .45), transparent 70%); }
-.hero[data-sky="evening"] .sky { background: linear-gradient(180deg, rgba(150, 70, 200, .5), rgba(255, 120, 60, .45) 65%, transparent); }
-.hero[data-sky="night"] .sky { background: linear-gradient(180deg, rgba(10, 14, 40, .35), transparent 70%); }
-.hero::after {
-  /* keeps the title readable over any sky */
+/* A night sky behind the title that fades into the page ground behind the lower part of the window, so the text
+   always sits on the dark (the page ground is paper in light mode). */
+.hero::before {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: 0 0 min(300px, 24vw);
   z-index: -1;
   background:
-    radial-gradient(ellipse 42% 46% at 50% 48%, rgba(6, 11, 16, var(--scrim, .55)), transparent 72%),
-    linear-gradient(180deg, rgba(6, 11, 16, .45), transparent 26%);
-  pointer-events: none;
+    radial-gradient(ellipse 60% 75% at 50% 0%, rgba(80, 110, 190, .35), transparent 70%),
+    linear-gradient(180deg, #0e1524 0%, #0f1727 75%, var(--bg) 100%);
 }
-.hero[data-sky="morning"], .hero[data-sky="evening"], .hero[data-sky="day"] { --scrim: .7; }
-.stars {
-  position: absolute;
-  inset: 0 0 45%;
-  opacity: 0;
-  transition: opacity .8s;
-  background-image:
-    radial-gradient(1.6px 1.6px at 12% 18%, #fff, transparent),
-    radial-gradient(1.2px 1.2px at 27% 36%, #fff, transparent),
-    radial-gradient(1.8px 1.8px at 44% 12%, #fff, transparent),
-    radial-gradient(1.2px 1.2px at 63% 30%, #fff, transparent),
-    radial-gradient(1.6px 1.6px at 78% 14%, #fff, transparent),
-    radial-gradient(1.2px 1.2px at 88% 40%, #fff, transparent),
-    radial-gradient(1.4px 1.4px at 35% 8%, #fff, transparent),
-    radial-gradient(1.2px 1.2px at 56% 46%, #fff, transparent);
-  animation: twinkle 3.4s ease-in-out infinite alternate;
-}
-.hero[data-sky="night"] .stars { opacity: 1; }
-.hero[data-sky="evening"] .stars { opacity: .45; }
-
-/* Low mist drifting over the water, thicker in the morning. */
-.fog { position: absolute; inset: auto 0 0; height: 40%; pointer-events: none; overflow: hidden; opacity: .5; }
-.hero[data-sky="morning"] .fog { opacity: 1; }
-.fog i {
-  position: absolute;
-  bottom: -10%;
-  left: 0;
-  width: 200%;
-  height: 70%;
-  /* one tile is half the strip wide, so sliding by half loops without a seam */
-  background:
-    radial-gradient(ellipse 18% 40% at 20% 60%, rgba(255, 255, 255, .22), transparent 70%),
-    radial-gradient(ellipse 22% 35% at 55% 70%, rgba(255, 255, 255, .18), transparent 70%),
-    radial-gradient(ellipse 16% 45% at 85% 55%, rgba(255, 255, 255, .2), transparent 70%);
-  background-size: 50% 100%;
-  background-repeat: repeat-x;
-  filter: blur(6px);
-  animation: drift 40s linear infinite;
-}
-.fog i + i { bottom: 8%; opacity: .7; animation-duration: 64s; animation-direction: reverse; }
-
-.birds { position: absolute; top: 16%; left: 0; width: 100%; height: 30%; pointer-events: none; }
-.bird {
-  position: absolute;
-  width: 34px;
-  height: 14px;
-  fill: none;
-  stroke: rgba(10, 12, 22, .85);
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  animation: glide 38s linear infinite, flap .5s ease-in-out infinite alternate;
-}
-.hero[data-sky="night"] .bird { stroke: rgba(220, 228, 255, .7); }
-.b1 { top: 10%; animation-delay: -4s, 0s; }
-.b2 { top: 34%; width: 26px; animation-duration: 46s, .42s; animation-delay: -20s, -.2s; }
-.b3 { top: 22%; width: 20px; animation-duration: 52s, .38s; animation-delay: -33s, -.1s; }
-
-.prop { position: absolute; bottom: -10px; will-change: transform; }
-.prop img { width: 100%; filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .45)); }
-.prop-l { left: max(-60px, -3vw); width: clamp(250px, 33vw, 560px); animation: rise-l 1.1s .1s var(--ease) both; }
-.prop-r { right: max(-70px, -4vw); width: clamp(260px, 36vw, 620px); animation: rise-r 1.1s .25s var(--ease) both; }
-.prop-l img { animation: bob 6s ease-in-out infinite; }
-.prop-r img { animation: bob 7s -2s ease-in-out infinite; }
-
-/* Lighthouse beam: a soft cone that sweeps from the lamp, brightest at night. */
-.beam {
-  position: absolute;
-  left: 50%;
-  top: 11.5%;
-  width: 150vw;
-  height: 220px;
-  margin-top: -110px;
-  transform-origin: 0 50%;
-  background: linear-gradient(90deg, rgba(255, 244, 190, .75), rgba(255, 238, 170, .18) 40%, transparent 75%);
-  clip-path: polygon(0 47%, 100% 0, 100% 100%, 0 53%);
-  mix-blend-mode: screen;
-  opacity: 0;
-  animation: sweep 9s ease-in-out infinite;
-  pointer-events: none;
-}
-.hero[data-sky="night"] .beam { opacity: .85; }
-.hero[data-sky="evening"] .beam { opacity: .5; }
-.prop-l::before {
-  /* lamp glow */
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 11.5%;
-  width: 120px;
-  height: 120px;
-  margin: -60px 0 0 -60px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 236, 150, .9), rgba(255, 210, 90, .3) 40%, transparent 70%);
-  mix-blend-mode: screen;
-  opacity: 0;
-  animation: glow 3s ease-in-out infinite alternate;
-  z-index: 1;
-}
-.hero[data-sky="night"] .prop-l::before, .hero[data-sky="evening"] .prop-l::before { opacity: 1; }
-
-.waves { position: absolute; left: 0; bottom: -1px; width: 200%; height: 90px; }
-.wv { fill: var(--bg); }
-.wv1 { opacity: .55; animation: drift 14s linear infinite; }
-.wv2 { animation: drift 22s linear infinite reverse; }
 
 .hero-mid {
-  position: relative;
-  z-index: 2;
-  width: min(760px, 100% - 32px);
-  /* the bottom padding leaves room for the app window that rises over the hero's lower edge */
-  padding: 140px 0 300px;
+  width: min(820px, 100% - 32px);
   text-align: center;
   display: grid;
   justify-items: center;
-  gap: 18px;
+  gap: 14px;
 }
-.hero-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font: italic 900 clamp(34px, 4vw, 46px)/1 var(--display);
-  letter-spacing: .01em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, .5);
-}
-.hero-logo img { width: 1.1em; height: 1.1em; }
 .hero h1 {
-  font: 900 clamp(64px, 10.5vw, 148px)/.86 var(--display);
+  font: 900 clamp(46px, 5.6vw, 84px)/.92 var(--display);
   text-transform: uppercase;
   letter-spacing: -.005em;
-  text-shadow: 0 4px 0 rgba(6, 11, 16, .45), 0 16px 40px rgba(0, 0, 0, .45);
 }
-.hero h1 span { display: block; }
-.hero-lead { max-width: 560px; font-size: clamp(16px, 1.6vw, 19px); color: rgba(255, 255, 255, .94); text-shadow: 0 1px 2px rgba(0, 0, 0, .9), 0 2px 12px rgba(0, 0, 0, .75); }
+.hero-lead { max-width: 560px; font-size: clamp(16px, 1.6vw, 19px); color: rgba(255, 255, 255, .9); }
 .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 6px; }
-.hero-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; font-weight: 600; font-size: 14px; color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .9), 0 1px 8px rgba(0, 0, 0, .8); }
+.hero-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; font-weight: 600; font-size: 14px; color: #fff; }
 .hero-meta li { display: inline-flex; align-items: center; gap: 6px; }
 .hero-meta .ic { color: #5eead4; stroke-width: 3; }
 
@@ -494,15 +354,10 @@ kbd {
 .days-left { position: relative; color: var(--text-2); font-size: 15px; }
 .days-left b { display: block; font: 900 44px/1 var(--display); color: var(--accent-text); font-variant-numeric: tabular-nums; }
 
-/* ---------- The real app, standing in the hero ---------- */
-/* Pulled up over the hero's lower edge, so the window stands on the water between the lighthouse and the crane. */
-.hero-shot {
-  --shot-up: 230px;
-  position: relative;
-  z-index: 3;
-  width: min(860px, 100% - 32px);
-  margin: calc(-1 * var(--shot-up)) auto 0;
-}
+/* ---------- The real app, in the hero ---------- */
+.hero-shot { width: min(1180px, 100% - 32px); }
+.hero .shot-frame { border: 1px solid rgba(255, 255, 255, .14); border-radius: 12px; box-shadow: 0 30px 80px rgba(0, 0, 0, .5); }
+.hero .shot-frame img { aspect-ratio: 1280 / 720; }
 .shot-frame {
   border-radius: 14px;
   overflow: hidden;
@@ -846,17 +701,9 @@ kbd {
 /* no opacity: off-screen content is only shifted, never hidden */
 @keyframes reveal-up { from { translate: 0 40px; } to { translate: none; } }
 @keyframes step-in { from { translate: -24px 0; } to { translate: none; } }
-@keyframes rise-l { from { opacity: 0; transform: translate(-60px, 80px); } to { opacity: 1; transform: none; } }
-@keyframes rise-r { from { opacity: 0; transform: translate(60px, 80px); } to { opacity: 1; transform: none; } }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @keyframes hop { 0%, 70%, 100% { transform: translateY(0) rotate(0); } 76% { transform: translateY(-12px) rotate(-3deg); } 82% { transform: translateY(0) rotate(0); } 88% { transform: translateY(-5px) rotate(2deg); } }
 @keyframes peek { 0%, 12%, 100% { transform: translateY(100%); } 22%, 62% { transform: translateY(8%); } 30% { transform: translateY(8%) rotate(-5deg); } 40% { transform: translateY(8%) rotate(4deg); } 50% { transform: translateY(8%) rotate(0); } 72% { transform: translateY(100%); } }
-@keyframes twinkle { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
-@keyframes sweep { 0%, 100% { transform: rotate(-16deg) scaleX(.85); } 50% { transform: rotate(10deg) scaleX(1); } }
-@keyframes glow { from { transform: scale(.85); opacity: .7; } to { transform: scale(1.15); opacity: 1; } }
-@keyframes drift { to { transform: translateX(-50%); } }
-@keyframes glide { from { transform: translateX(110vw); } to { transform: translateX(-10vw); } }
-@keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(.45); } }
 @keyframes eq { from { transform: scaleY(.35); } to { transform: scaleY(1); } }
 
 /* ---------- Responsive ---------- */
@@ -892,13 +739,7 @@ kbd {
   .logo-word { font-size: 26px; }
   .arc-note { padding: 6px 4px; font-size: 13px; }
   .btn-go { height: 42px; padding: 0 14px; }
-  .hero { min-height: 0; align-items: start; }
-  .hero::after { background: radial-gradient(ellipse 80% 40% at 50% 36%, rgba(6, 11, 16, var(--scrim, .55)), transparent 75%), linear-gradient(180deg, rgba(6, 11, 16, .45), transparent 26%); }
-  .hero-mid { padding: 104px 0 calc(58vw + 10px); gap: 14px; }
-  .hero-shot { --shot-up: 9vw; }
-  .prop-l { width: 52vw; left: -6vw; }
-  .prop-r { width: 56vw; right: -8vw; }
-  .waves { height: 50px; }
+  .hero { padding-top: 96px; gap: 24px; }
   .tiles { grid-template-columns: 1fr; }
   .mini-cards { grid-template-columns: 1fr; }
   .guards { grid-template-columns: 1fr; }
@@ -921,7 +762,6 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal, .steps li { opacity: 1; transform: none; translate: none; scale: none; }
-  .beam { display: none; }
   .foot-gull { transform: translateY(8%); }
   html { scroll-behavior: auto; }
 }

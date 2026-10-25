@@ -30,6 +30,16 @@ const video = (title, art, channel, views) =>
     <div><img src="/art/card-zap.webp"><span><b>Why popups are everywhere, and how to stop them</b>Web Explained · 88k views</span></div>
     <div><img src="/art/card-agent.webp"><span><b>Let an AI fill in boring forms for you</b>Tiny Tools · 203k views</span></div></div></div>`)
 
+// An ordinary text page for the window in the site's hero: it should read as a browser with a web page in it.
+const blogCss = `body{background:#fbfaf7}header{display:flex;align-items:center;gap:26px;padding:14px 48px;border-bottom:1px solid #e7e3da;background:#fff}header b{font:700 21px/1 Georgia,serif;letter-spacing:-.01em}header span{color:#6b6760;font-size:14px}header i{flex:1}header u{text-decoration:none;font-size:13px;font-weight:600;border:1px solid #d9d4c8;border-radius:999px;padding:6px 14px}.page{display:grid;grid-template-columns:minmax(0,680px) 240px;gap:56px;justify-content:center;padding:34px 48px}.kicker{color:#b4541a;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}h1{font:700 40px/1.12 Georgia,serif;margin:8px 0 12px;letter-spacing:-.015em}.by{color:#6b6760;font-size:14px;margin-bottom:22px}.fig{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:18px;border:1px solid #e7e3da;border-radius:14px;background:#fff;margin:0 0 8px}.fig div{border:2px dashed #c9c2b3;border-radius:10px;padding:12px;font-size:13px;color:#5d5952}.fig b{display:block;font-size:14px;color:#1d1b26;margin-bottom:6px}.fig em{display:block;height:46px;border-radius:7px;margin-top:8px;background:linear-gradient(135deg,#e9e4d8,#f6f2ea)}.cap{font-size:13px;color:#6b6760;margin:0 0 20px}p{font-size:17px;line-height:1.7;color:#2b2925;margin:0 0 16px}h2{font:700 24px/1.25 Georgia,serif;margin:26px 0 10px}pre{background:#1f2430;color:#e6e1d6;border-radius:10px;padding:14px 16px;font:13px/1.6 Consolas,monospace;overflow:hidden}aside{font-size:14px;color:#4a4740}aside h4{margin:4px 0 10px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a857b}aside a{display:block;padding:6px 0 6px 12px;border-left:2px solid #e7e3da;color:#4a4740;text-decoration:none}aside a.on{border-color:#b4541a;color:#1d1b26;font-weight:600}aside .rel{margin-top:30px}aside .rel div{padding:10px 0;border-top:1px solid #ece8df}`
+const blog = doc('How your browser keeps every site in its own box', '#b4541a', 'F', blogCss, `<header><b>Field Notes</b><span>Web</span><span>Security</span><span>Tools</span><i></i><u>Subscribe</u></header><div class=page><article><div class=kicker>How it works</div><h1>How your browser keeps every site in its own box</h1><div class=by>Maya Chen · October 24 · 6 min read</div>
+  <div class=fig><div><b>news.test</b>Its own process<em></em></div><div><b>mail.test</b>Its own process<em></em></div><div><b>bank.test</b>Its own process<em></em></div></div><p class=cap>Each site runs in a separate, sandboxed process. One tab cannot read another's memory.</p>
+  <p>Open a news site, your mail and your bank in three tabs, and it feels like one program. Underneath, the browser has started a separate process for each site and walled it off from the others and from your files.</p>
+  <h2>Why one process per site</h2><p>A page that crashes, or a script that misbehaves, takes down only its own process. The rest of your tabs keep working, and nothing it does can reach the data of a site in another tab.</p>
+  <pre>// what the browser checks before a frame can touch another
+if (frame.site !== target.site) block('cross-site access')</pre></article>
+  <aside><h4>On this page</h4><a class=on>One process per site</a><a>The sandbox</a><a>What extensions can see</a><a>Keeping it fast</a><div class=rel><h4>Related</h4><div>Why your tabs fall asleep</div><div>Cookies, explained in five minutes</div><div>What "private" really means</div></div></aside></div>`)
+
 const newsCss = `header{padding:18px 40px 10px;border-bottom:3px solid #1d1b26;display:flex;align-items:baseline;gap:16px}header b{font:700 30px/1 Georgia,serif}header span{color:#777;font-size:13px}.hero{position:relative;margin:22px 40px 0;border-radius:16px;overflow:hidden}.hero img{width:100%;height:270px;object-fit:cover}.hero::after{content:'';position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(10,14,24,.78))}.hero h1{z-index:1;position:absolute;left:24px;right:24px;bottom:18px;margin:0;color:#fff;font:700 30px/1.15 Georgia,serif;text-shadow:0 2px 12px rgba(0,0,0,.6)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding:22px 40px}.grid img{height:120px;width:100%;object-fit:contain;background:#f4efe4;border-radius:12px}.grid h3{font:700 17px/1.3 Georgia,serif;margin:10px 0 4px}.grid p{margin:0;color:#555;font-size:14px}`
 const news = doc('Morning brief', '#f5a524', 'N', newsCss, `<header><b>The Morning Brief</b><span>Saturday, October 24</span></header><div class=hero><img src="/art/bg-day.webp"><h1>Harbour towns are getting their old ferries back</h1></div><div class=grid>
   <div><img src="/art/lighthouse.webp"><h3>The last lighthouse keeper retires</h3><p>Forty years of night shifts, told in one long walk.</p></div>
@@ -67,6 +77,7 @@ const pages = () => ({
   'video.test/electron': video('How Electron works, in 18 minutes', 'card-tabs.webp', 'Tiny Tools', '1.2M views · 3 weeks ago'),
   'video.test/synthwave': video('Synthwave mix 2026', 'bg-evening.webp', 'Night Drive', '640k views · 2 months ago'),
   'docs.test/': docsPage,
+  'blog.test/': blog,
   'news.test/': news,
   'trips.test/': trips,
   'acme.test/login': doc('Sign in · Acme', '#30a46c', 'A', loginCss, '<form method=post action=/welcome><h2 style="margin:0 0 6px">Sign in to Acme</h2><label for=email>Email</label><input id=email type=email autocomplete=username><label for=pw>Password</label><input id=pw type=password><button id=go>Sign in</button></form>'),
@@ -204,8 +215,8 @@ async function launch(dir, extraEnv = {}) {
   await call('createSpace', { title: 'Work', icon: 'briefcase', theme: { color: '#3e63dd', mode: 'dark', texture: 'none', intensity: 0.7 } })
   await call('createSpace', { title: 'Side project', icon: 'code', theme: { color: '#12a5b0', mode: 'dark', texture: 'none', intensity: 0.7 } })
   await call('switchSpace', personal.id)
-  const urls = { news: at('news.test'), docs: at('docs.test'), synth: at('video.test', '/synthwave'), lofi: at('video.test', '/lofi'), electron: at('video.test', '/electron'), code: at('code.test'), mail: at('mail.test') }
-  for (const k of ['news', 'docs', 'synth', 'lofi', 'electron', 'code', 'mail']) await call('openTab', urls[k])
+  const urls = { news: at('news.test'), docs: at('docs.test'), synth: at('video.test', '/synthwave'), lofi: at('video.test', '/lofi'), electron: at('video.test', '/electron'), blog: at('blog.test'), code: at('code.test'), mail: at('mail.test') }
+  for (const k of ['news', 'docs', 'synth', 'lofi', 'electron', 'blog', 'code', 'mail']) await call('openTab', urls[k])
   s = await call('state')
   const by = (k) => s.items.find((i) => i.url === urls[k])
   await call('moveItem', by('mail').id, { section: 'favorites', parentId: null, index: 0 })
@@ -215,7 +226,8 @@ async function launch(dir, extraEnv = {}) {
   await call('rename', group, 'Reading')
   await call('moveItem', by('news').id, { section: 'today', parentId: group, index: 0 })
   await call('moveItem', by('docs').id, { section: 'today', parentId: group, index: 1 })
-  await call('activate', by('electron').id)
+  // The hero's window shows an ordinary article; the shots after it go back to the video tab.
+  await call('activate', by('blog').id)
   await sleep(1500)
 
   await capture('window-dark')
@@ -223,6 +235,7 @@ async function launch(dir, extraEnv = {}) {
   await sleep(600)
   await capture('window-light')
   await call('updateSpace', personal.id, { theme: { ...personal.theme, color: '#7c6cf2', mode: 'dark' } })
+  await call('activate', by('electron').id)
   await sleep(400)
 
   // The classic Arc-style sidebar, one setting away

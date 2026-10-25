@@ -90,31 +90,17 @@
   var daysLeft = Math.max(0, Math.round((ARC_SUNSET - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000));
   each('[data-days-left]', function (el) { el.textContent = String(daysLeft); });
 
-  // 6. The hero harbour follows the visitor's clock.
-  var hero = document.getElementById('hero');
-  var skyline = document.getElementById('skyline');
-  var hour = new Date().getHours();
-  var sky = hour >= 5 && hour < 9 ? 'morning' : hour >= 9 && hour < 17 ? 'day' : hour >= 17 && hour < 20 ? 'evening' : 'night';
-  var asked = /[?&]sky=(morning|day|evening|night)\b/.exec(location.search);
-  if (asked) sky = asked[1];
-  if (hero) hero.setAttribute('data-sky', sky);
-  if (skyline && sky !== 'night') {
-    var next = new Image();
-    next.onload = function () { skyline.src = next.src; };
-    next.src = 'assets/comic/bg-' + sky + '.webp';
-  }
-
-  // 7. Top bar firms up once the page scrolls.
+  // 6. Top bar firms up once the page scrolls.
   var bar = document.getElementById('topbar');
   var onScroll = function () { if (bar) bar.classList.toggle('scrolled', window.scrollY > 24); };
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 
-  // 8. Footer year.
+  // 7. Footer year.
   var year = document.getElementById('year');
   if (year) year.textContent = String(new Date().getFullYear());
 
-  // 9. The tour: a view picked on the left shows its screenshot. While the tour is on screen it moves on by itself
+  // 8. The tour: a view picked on the left shows its screenshot. While the tour is on screen it moves on by itself
   //    every few seconds, until the visitor picks one; reduced motion never moves it.
   var tour = document.querySelector('[data-tour]');
   if (tour) {
@@ -174,45 +160,5 @@
     }
     document.addEventListener('visibilitychange', schedule);
     show(0);
-  }
-
-  // Sections rise in through CSS view timelines; nothing below needs to run with reduced motion.
-  if (still) return;
-
-  // 10. Hero depth: the props drift with the scroll and lean a little towards the pointer.
-  var props = document.querySelectorAll('.prop');
-  if (hero && props.length) {
-    var mx = 0;
-    var my = 0;
-    var queued = false;
-    var paint = function () {
-      queued = false;
-      var y = Math.min(window.scrollY, hero.offsetHeight);
-      Array.prototype.forEach.call(props, function (p) {
-        var depth = Number(p.getAttribute('data-depth')) || 20;
-        p.style.translate = (mx * depth * 0.6) + 'px ' + (y * depth / 100 + my * depth * 0.3) + 'px';
-      });
-      if (skyline) skyline.style.translate = '0 ' + (y * 0.12) + 'px';
-    };
-    var queue = function () {
-      if (!queued) {
-        queued = true;
-        requestAnimationFrame(paint);
-      }
-    };
-    window.addEventListener('scroll', queue, { passive: true });
-    if (window.matchMedia('(pointer: fine)').matches) {
-      hero.addEventListener('pointermove', function (e) {
-        var r = hero.getBoundingClientRect();
-        mx = (e.clientX - r.left) / r.width - 0.5;
-        my = (e.clientY - r.top) / r.height - 0.5;
-        queue();
-      });
-      hero.addEventListener('pointerleave', function () {
-        mx = 0;
-        my = 0;
-        queue();
-      });
-    }
   }
 })();

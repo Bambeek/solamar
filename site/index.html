@@ -85,55 +85,36 @@
   </header>
 
   <main id="main">
-    <!-- Hero: a harbour at the visitor's own time of day, props on both sides, title in the middle -->
-    <section class="hero" id="hero" aria-labelledby="hero-title" data-sky="night">
-      <div class="scene" aria-hidden="true">
-        <img class="skyline" id="skyline" src="assets/comic/bg-night.webp" alt="" width="1536" height="768" decoding="async">
-        <div class="sky"></div>
-        <div class="stars"></div>
-        <div class="fog"><i></i><i></i></div>
-        <div class="birds">
-          <svg class="bird b1" viewBox="0 0 32 12"><path d="M1 9q7-9 15 0q8-9 15 0"/></svg>
-          <svg class="bird b2" viewBox="0 0 32 12"><path d="M1 9q7-9 15 0q8-9 15 0"/></svg>
-          <svg class="bird b3" viewBox="0 0 32 12"><path d="M1 9q7-9 15 0q8-9 15 0"/></svg>
-        </div>
-        <div class="prop prop-l" data-depth="18"><span class="beam"></span><img src="assets/comic/lighthouse.webp" alt="" width="746" height="799" decoding="async"></div>
-        <div class="prop prop-r" data-depth="24"><img src="assets/comic/crane.webp" alt="" width="800" height="791" decoding="async"></div>
-        <svg class="waves" viewBox="0 0 2880 120" preserveAspectRatio="none">
-          <path class="wv wv1" d="M0 60 Q90 30 180 60 T360 60 T540 60 T720 60 T900 60 T1080 60 T1260 60 T1440 60 T1620 60 T1800 60 T1980 60 T2160 60 T2340 60 T2520 60 T2700 60 T2880 60 V120 H0z"/>
-          <path class="wv wv2" d="M0 80 Q120 55 240 80 T480 80 T720 80 T960 80 T1200 80 T1440 80 T1680 80 T1920 80 T2160 80 T2400 80 T2640 80 T2880 80 V120 H0z"/>
-        </svg>
-      </div>
-
+    <!-- Hero: a short title, then the real app -->
+    <section class="hero" id="hero" aria-labelledby="hero-title">
       <div class="hero-mid">
-        <p class="hero-logo fx-up" style="--d:0"><img src="icon.svg" alt="" width="40" height="40"><span data-brand="name"></span></p>
-        <h1 id="hero-title" class="fx-up" style="--d:1"><span>The browser</span> <span>after Arc</span></h1>
-        <p class="hero-lead fx-up" style="--d:2">Free for Windows and macOS. Spaces, tabs you can tell apart and an ad blocker built in. Your Arc spaces come over in one click. No account, no telemetry.</p>
-        <div class="hero-actions fx-up" style="--d:3">
+        <h1 id="hero-title" class="fx-up" style="--d:0">The browser after Arc</h1>
+        <p class="hero-lead fx-up" style="--d:1">Free for Windows and macOS. Spaces, tabs you can tell apart and an ad blocker built in. Your Arc spaces come over in one click. No account, no telemetry.</p>
+        <div class="hero-actions fx-up" style="--d:2">
           <a class="btn-main" data-download href="#download">
             <svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>
             Download free
           </a>
-          <a class="btn-quiet" href="#good-stuff">See what it does</a>
+          <a class="btn-quiet" href="#tour">Take a look around</a>
         </div>
-        <ul class="hero-meta fx-up" style="--d:4">
+        <ul class="hero-meta fx-up" style="--d:3">
           <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Free</li>
           <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>No account</li>
           <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Open source</li>
         </ul>
       </div>
-    </section>
 
-    <!-- The real app, standing on the water between the lighthouse and the crane -->
-    <figure class="hero-shot fx-up" style="--d:5">
-      <div class="shot-frame">
-        <picture>
-          <source srcset="assets/window-light.webp" media="(prefers-color-scheme: light)">
-          <img src="assets/window-dark.webp" width="1280" height="760" decoding="async"
-               alt="The browser with three spaces as pills in the top bar and a row of titled tabs: three video tabs from the same site, each with its title and a close button, and a Reading group.">
-        </picture>
-      </div>
-    </figure>
+      <!-- The real app first: a Solamar window with an ordinary article open -->
+      <figure class="hero-shot fx-up" style="--d:4">
+        <div class="shot-frame">
+          <picture>
+            <source srcset="assets/window-light.webp?v=2" media="(prefers-color-scheme: light)">
+            <img src="assets/window-dark.webp?v=2" width="1920" height="1141" decoding="async"
+                 alt="Solamar with three spaces as pills in the top bar, a row of titled tabs and an article about site isolation open in the active tab.">
+          </picture>
+        </div>
+      </figure>
+    </section>
 
     <!-- A tour of the real app: pick a view on the left, the screenshot changes on the right -->
     <section class="sec tour" id="tour" aria-labelledby="tour-title">
@@ -187,16 +168,16 @@
             <div class="shot-frame tour-frame">
               <!-- the other look from the hero's, so the tour opens on something new: light on a dark page, dark on a light one -->
               <picture class="tour-shot on" data-shot="tabs">
-                <source srcset="assets/window-dark.webp" media="(prefers-color-scheme: light)">
-                <img src="assets/window-light.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="The browser with three spaces as pills in the top bar and a row of titled tabs: three video tabs from the same site, each with its title and a close button, and a Reading group.">
+                <source srcset="assets/window-dark.webp?v=2" media="(prefers-color-scheme: light)">
+                <img src="assets/window-light.webp?v=2" width="1920" height="1140" loading="lazy" decoding="async" alt="The browser with three spaces as pills in the top bar and a row of titled tabs: three video tabs from the same site, each with its title and a close button, and a Reading group.">
               </picture>
-              <img class="tour-shot" data-shot="command" src="assets/tour-command.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="The command bar over the page, with a typed question and the choices Search, Ask AI and a sharper search.">
-              <img class="tour-shot" data-shot="peek" src="assets/peek.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="A news page shown in a Peek card over a pinned tab, with buttons to open it as a tab or in split view.">
-              <img class="tour-shot" data-shot="split" src="assets/tour-split.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="Split view: a video on the left and a news page on the right, in one window.">
-              <img class="tour-shot" data-shot="boost" src="assets/boost.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="The Boost editor next to a page shown with warm colours and a serif font, its newsletter banner zapped away.">
-              <img class="tour-shot" data-shot="ai" src="assets/agent.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="The AI panel with the gull: a request to fill in a trip form, the steps it took, and the form filled in with a name and a city.">
-              <img class="tour-shot" data-shot="settings" src="assets/tour-settings.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="Settings, Appearance: a choice of app icons, the tab layout and the colours of spaces.">
-              <img class="tour-shot" data-shot="sidebar" src="assets/tour-sidebar.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="The classic layout: spaces and tabs in a vertical sidebar on the left, the page on the right.">
+              <img class="tour-shot" data-shot="command" src="assets/tour-command.webp?v=2" width="1920" height="1140" loading="lazy" decoding="async" alt="The command bar over the page, with a typed question and the choices Search, Ask AI and a sharper search.">
+              <img class="tour-shot" data-shot="peek" src="assets/peek.webp?v=2" width="1920" height="1140" loading="lazy" decoding="async" alt="A news page shown in a Peek card over a pinned tab, with buttons to open it as a tab or in split view.">
+              <img class="tour-shot" data-shot="split" src="assets/tour-split.webp?v=2" width="1920" height="1140" loading="lazy" decoding="async" alt="Split view: a video on the left and a news page on the right, in one window.">
+              <img class="tour-shot" data-shot="boost" src="assets/boost.webp?v=2" width="1920" height="1140" loading="lazy" decoding="async" alt="The Boost editor next to a page shown with warm colours and a serif font, its newsletter banner zapped away.">
+              <img class="tour-shot" data-shot="ai" src="assets/agent.webp?v=2" width="1920" height="1140" loading="lazy" decoding="async" alt="The AI panel with the gull: a request to fill in a trip form, the steps it took, and the form filled in with a name and a city.">
+              <img class="tour-shot" data-shot="settings" src="assets/tour-settings.webp?v=2" width="1920" height="1140" loading="lazy" decoding="async" alt="Settings, Appearance: a choice of app icons, the tab layout and the colours of spaces.">
+              <img class="tour-shot" data-shot="sidebar" src="assets/tour-sidebar.webp?v=2" width="1920" height="1140" loading="lazy" decoding="async" alt="The classic layout: spaces and tabs in a vertical sidebar on the left, the page on the right.">
             </div>
             <p class="tour-caption" aria-hidden="true"></p>
           </div>
@@ -352,7 +333,7 @@
             </ol>
           </div>
           <div class="panel-frame agent-shot">
-            <img src="assets/agent.webp" width="1280" height="760" loading="lazy" decoding="async"
+            <img src="assets/agent.webp?v=2" width="1280" height="760" loading="lazy" decoding="async"
                  alt="The browser with the AI panel in Do it for me mode: a request to fill in a trip form, a list of steps, and the form filled in with a name and a city.">
           </div>
         </div>

@@ -1,8 +1,6 @@
-// Screenshots of the landing page: the hero at each time of day the visitor might see, then the whole page,
-// at desktop and phone widths in dark and light.
-// Usage (from the repo root, Playwright is a dev dependency): node site/screens.mjs [sky ...]
-//   sky: night, morning, day, evening (default: night day)
-// Output: site/screens/hero-<width>-<scheme>-<sky>.png and site/screens/<width>-<scheme>.png (git-ignored).
+// Screenshots of the landing page: the first screen, then the whole page, at desktop and phone widths in dark and
+// light. Usage (from the repo root, Playwright is a dev dependency): node site/screens.mjs
+// Output: site/screens/hero-<width>-<scheme>.png and site/screens/<width>-<scheme>.png (git-ignored).
 // Also reports console errors, failed requests and horizontal overflow, and exits non-zero if any are found.
 import { chromium } from 'playwright'
 import { createServer } from 'node:http'
@@ -28,7 +26,6 @@ const server = createServer((req, res) => {
 await new Promise((r) => server.listen(0, '127.0.0.1', r))
 const base = `http://127.0.0.1:${server.address().port}/`
 
-const skies = process.argv.slice(2).length ? process.argv.slice(2) : ['night', 'day']
 let problems = 0
 
 // Playwright's own Chromium if it is installed, otherwise the Edge or Chrome already on the PC.
@@ -39,7 +36,7 @@ async function launch() {
   throw new Error('No browser found. Run: npx playwright install chromium')
 }
 
-async function open(browser, width, colorScheme, sky) {
+async function open(browser, width, colorScheme) {
   const context = await browser.newContext({ viewport: { width, height: width > 800 ? 900 : 844 }, colorScheme, deviceScaleFactor: 1 })
   const page = await context.newPage()
   const errors = []
@@ -47,7 +44,7 @@ async function open(browser, width, colorScheme, sky) {
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`))
   page.on('requestfailed', (r) => errors.push(`requestfailed: ${r.url()}`))
   page.on('response', (r) => { if (r.status() >= 400) errors.push(`${r.status()}: ${r.url()}`) })
-  await page.goto(`${base}?sky=${sky}`, { waitUntil: 'load' })
+  await page.goto(base, { waitUntil: 'load' })
   await page.evaluate(async () => {
     document.querySelectorAll('img[loading="lazy"]').forEach((img) => { img.loading = 'eager' })
     await Promise.all([...document.images].map((img) => img.complete ? null : new Promise((r) => { img.onload = img.onerror = r })))
@@ -60,38 +57,33 @@ const browser = await launch()
 try {
   for (const width of [1440, 390]) {
     for (const colorScheme of ['dark', 'light']) {
-      for (const sky of skies) {
-        const { context, page, errors } = await open(browser, width, colorScheme, sky)
-        await page.waitForTimeout(2600)
-        await page.screenshot({ path: join(out, `hero-${width}-${colorScheme}-${sky}.png`) })
-        if (sky === skies[0]) {
-          // A full-page shot does not scroll: scroll through once like a reader, then back to the top.
-          await page.evaluate(async () => {
-            const wait = (ms) => new Promise((r) => setTimeout(r, ms))
-            for (let y = 0; y < document.documentElement.scrollHeight; y += 450) { window.scrollTo(0, y); await wait(70) }
-            window.scrollTo(0, 0)
-          })
-          await page.waitForTimeout(1500)
-          const overflow = await page.evaluate(() => {
-            const doc = document.documentElement
-            const wide = [...document.querySelectorAll('body *')].filter((el) => {
-              if (el.closest('.scene')) return false
-              // inside a row that scrolls on its own (the tour's chips on a phone) is fine
-              for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) if (/auto|scroll/.test(getComputedStyle(a).overflowX)) return false
-              const r = el.getBoundingClientRect()
-              return r.width > 0 && r.right > doc.clientWidth + 1
-            }).slice(0, 6).map((el) => el.tagName.toLowerCase() + '.' + String(el.className).split(' ').join('.'))
-            return { scrollWidth: doc.scrollWidth, clientWidth: doc.clientWidth, wide }
-          })
-          await page.screenshot({ path: join(out, `${width}-${colorScheme}.png`), fullPage: true })
-          if (overflow.scrollWidth > overflow.clientWidth || overflow.wide.length) {
-            problems++
-            console.log(`overflow ${width} ${colorScheme}:`, JSON.stringify(overflow))
-          }
-        }
-        if (errors.length) { problems++; console.log(`${width} ${colorScheme} ${sky}:\n  ` + errors.join('\n  ')) }
-        await context.close()
+      const { context, page, errors } = await open(browser, width, colorScheme)
+      await page.waitForTimeout(2600)
+      await page.screenshot({ path: join(out, `hero-${width}-${colorScheme}.png`) })
+      // A full-page shot does not scroll: scroll through once like a reader, then back to the top.
+      await page.evaluate(async () => {
+        const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+        for (let y = 0; y < document.documentElement.scrollHeight; y += 450) { window.scrollTo(0, y); await wait(70) }
+        window.scrollTo(0, 0)
+      })
+      await page.waitForTimeout(1500)
+      const overflow = await page.evaluate(() => {
+        const doc = document.documentElement
+        const wide = [...document.querySelectorAll('body *')].filter((el) => {
+          // inside a row that scrolls on its own (the tour's chips on a phone) is fine
+          for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) if (/auto|scroll/.test(getComputedStyle(a).overflowX)) return false
+          const r = el.getBoundingClientRect()
+          return r.width > 0 && r.right > doc.clientWidth + 1
+        }).slice(0, 6).map((el) => el.tagName.toLowerCase() + '.' + String(el.className).split(' ').join('.'))
+        return { scrollWidth: doc.scrollWidth, clientWidth: doc.clientWidth, wide }
+      })
+      await page.screenshot({ path: join(out, `${width}-${colorScheme}.png`), fullPage: true })
+      if (overflow.scrollWidth > overflow.clientWidth || overflow.wide.length) {
+        problems++
+        console.log(`overflow ${width} ${colorScheme}:`, JSON.stringify(overflow))
       }
+      if (errors.length) { problems++; console.log(`${width} ${colorScheme}:\n  ` + errors.join('\n  ')) }
+      await context.close()
     }
   }
 } finally {
