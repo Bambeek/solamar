@@ -1,0 +1,6 @@
+/* macOS: the window's traffic lights sit over the left end of Solamar's top bar (positions in browser.ts). */
+.frame.platform-darwin .bar-top,
+.frame.platform-darwin .sidebar-top,
+.frame.platform-darwin.no-sidebar .topbar {
+  padding-left: 80px;
+}

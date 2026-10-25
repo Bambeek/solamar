@@ -1,0 +1,671 @@
+/* AI side panel: the gull's chat (Ask) and the page agent (Do it for me). Where the panel sits is in app.css. */
+
+.ai-panel {
+  --ai-gutter: 14px;
+}
+
+.ai-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 54px;
+  padding: 0 8px 0 var(--ai-gutter);
+  border-bottom: 1px solid var(--color-border);
+}
+.ai-header-avatar,
+.ai-avatar {
+  flex: none;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-accent) 18%, var(--color-surface-2));
+}
+.ai-header-avatar {
+  width: 32px;
+  height: 32px;
+}
+.ai-header-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.ai-header-text strong {
+  font-size: var(--text-md);
+}
+.ai-header-text span {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.ai-icon-btn {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.ai-icon-btn:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+.ai-tabs {
+  flex: none;
+  display: flex;
+  gap: 2px;
+  margin: 12px var(--ai-gutter) 0;
+  padding: 3px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+}
+.ai-tabs button {
+  flex: 1;
+  height: 30px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+.ai-tabs button.on {
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.ai-thread {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px var(--ai-gutter);
+}
+.ai-thread::-webkit-scrollbar {
+  width: 10px;
+}
+.ai-thread::-webkit-scrollbar-button {
+  display: none;
+}
+.ai-thread::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-text) 22%, transparent) padding-box;
+}
+.ai-thread::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--color-text) 38%, transparent);
+}
+.ai-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ai-msg {
+  min-width: 0;
+  font-size: var(--text-md);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.ai-msg-user {
+  align-self: flex-end;
+  max-width: 85%;
+  padding: 8px 12px;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  white-space: pre-wrap;
+}
+.ai-msg-ai {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.ai-avatar {
+  width: 28px;
+  height: 28px;
+}
+.ai-msg-body {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: 4px 16px 16px 16px;
+  background: var(--color-surface-2);
+}
+.ai-working {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+.md + .ai-working {
+  margin-top: 6px;
+}
+.ai-dots {
+  display: inline-flex;
+  gap: 3px;
+}
+.ai-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: ai-dot 1.2s ease-in-out infinite;
+}
+.ai-dots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.ai-dots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.md p {
+  margin: 0 0 8px;
+}
+.md > :last-child {
+  margin-bottom: 0;
+}
+.md ul,
+.md ol {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+.md li {
+  margin: 3px 0;
+}
+.md li::marker {
+  color: var(--color-text-muted);
+}
+.md code {
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--color-text) 10%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+}
+.md a {
+  color: var(--color-accent);
+}
+
+.ai-steps {
+  margin-left: 38px;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.ai-steps summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+  list-style: none;
+  cursor: pointer;
+}
+.ai-steps summary::-webkit-details-marker {
+  display: none;
+}
+.ai-steps summary svg {
+  color: var(--color-success);
+}
+.ai-steps ol {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 8px 0 0 11px;
+  padding: 0 0 0 14px;
+  border-left: 2px solid var(--color-border);
+  list-style: none;
+}
+.ai-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.ai-step-dot {
+  position: absolute;
+  left: -19px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--color-surface);
+  border-radius: 50%;
+  background: var(--color-success);
+}
+.ai-step.waiting .ai-step-dot {
+  background: var(--color-accent);
+}
+.ai-step.denied .ai-step-dot,
+.ai-step.blocked .ai-step-dot,
+.ai-step.error .ai-step-dot {
+  background: var(--color-danger);
+}
+.ai-muted {
+  color: var(--color-text-muted);
+}
+.ai-step .ellipsis {
+  color: var(--color-text);
+}
+
+.ai-error {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-danger) 14%, transparent);
+  font-size: var(--text-sm);
+  text-align: left;
+}
+
+.ai-empty {
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 4px;
+  text-align: center;
+}
+.ai-empty-art {
+  width: 116px;
+  height: auto;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.25));
+}
+.ai-empty-peek .ai-empty-art {
+  width: 170px;
+}
+.ai-empty h3 {
+  margin: 4px 0 0;
+  font-size: var(--text-lg);
+}
+.ai-empty p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+.ai-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.ai-chips {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 var(--ai-gutter) 2px;
+}
+.ai-empty .ai-chips {
+  justify-content: center;
+  margin-top: 6px;
+  padding: 0;
+}
+.ai-chips.column {
+  flex-direction: column;
+  align-self: stretch;
+}
+.ai-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.ai-chip:hover:not(:disabled) {
+  background: var(--color-surface-2);
+}
+.ai-chip:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.ai-chips.column .ai-chip {
+  height: auto;
+  padding: 9px 12px;
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+.ai-card {
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-2);
+}
+.ai-tidy-group ul {
+  margin: 4px 0 10px;
+  padding-left: 18px;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.ai-row {
+  display: flex;
+  gap: 8px;
+}
+
+.ai-composer-wrap {
+  position: relative;
+  flex: none;
+  padding: 10px var(--ai-gutter) var(--ai-gutter);
+}
+.ai-composer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 4px 4px 14px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+}
+.ai-composer:focus-within {
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus) 25%, transparent);
+}
+.ai-composer input {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-md);
+}
+.ai-send {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  cursor: pointer;
+}
+.ai-send:disabled {
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  cursor: default;
+}
+.ai-send.stop {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+@keyframes ai-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-5deg);
+  }
+}
+@keyframes ai-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-dots i {
+    animation: none;
+  }
+}
+
+/* ---- the gull (Gull.tsx): stacked pose frames, one shown; motions live on the button, breathing on the body ---- */
+.gull {
+  position: relative;
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: transform 220ms ease;
+}
+.gull:hover {
+  transform: rotate(-3deg) translateY(-2px);
+}
+.gull:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 6px;
+  border-radius: 14px;
+}
+.gull-body {
+  position: relative;
+  display: block;
+  width: var(--gull-width, 132px);
+  aspect-ratio: 2 / 3;
+  transform-origin: 50% 100%;
+  animation: gull-breathe 3.4s ease-in-out infinite;
+}
+.gull-body img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.25));
+  pointer-events: none;
+  user-select: none;
+}
+.gull-body img.on {
+  opacity: 1;
+}
+.gull.hop {
+  animation: gull-hop 620ms cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.gull.wiggle {
+  animation: gull-wiggle 900ms ease-in-out 2;
+}
+.gull.wobble {
+  animation: gull-wobble 1.3s ease-in-out 2;
+}
+.gull-says {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 2px;
+  width: max-content;
+  max-width: 220px;
+  padding: 6px 11px;
+  border: 2px solid #15131b;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 2px 3px 0 #15131b;
+  color: #15131b;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+  transform: translate(-50%, -100%);
+  animation: gull-pop 240ms cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.gull-says::after {
+  content: '';
+  position: absolute;
+  left: calc(50% - 7px);
+  bottom: -9px;
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid #15131b;
+  border-bottom: 2px solid #15131b;
+  background: #fff;
+  transform: rotate(45deg);
+}
+.gull-feathers i {
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  width: 12px;
+  height: 5px;
+  border: 1.5px solid #15131b;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  animation: gull-feather 750ms ease-out forwards;
+}
+.gull-feathers i:nth-child(1) {
+  --dx: -46px;
+  --dy: -30px;
+  --r: -50deg;
+}
+.gull-feathers i:nth-child(2) {
+  --dx: 44px;
+  --dy: -40px;
+  --r: 40deg;
+  animation-delay: 60ms;
+}
+.gull-feathers i:nth-child(3) {
+  --dx: 30px;
+  --dy: 10px;
+  --r: 110deg;
+  animation-delay: 120ms;
+}
+
+.gull-head {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  cursor: pointer;
+}
+.gull-head img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+}
+.gull-head img.on {
+  opacity: 1;
+}
+.gull-head.working {
+  animation: ai-bob 1.1s ease-in-out infinite;
+}
+.gull-head.hop-a {
+  animation: gull-head-hop-a 460ms cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.gull-head.hop-b {
+  animation: gull-head-hop-b 460ms cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+@keyframes gull-breathe {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.012, 1.028);
+  }
+}
+@keyframes gull-hop {
+  0% {
+    transform: none;
+  }
+  18% {
+    transform: translateY(0) scale(1.08, 0.9);
+  }
+  45% {
+    transform: translateY(-18px) scale(0.95, 1.06);
+  }
+  75% {
+    transform: translateY(0) scale(1.05, 0.95);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes gull-wiggle {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-4deg);
+  }
+  75% {
+    transform: rotate(4deg);
+  }
+}
+@keyframes gull-wobble {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(-10deg) translateX(-4px);
+  }
+  50% {
+    transform: rotate(8deg) translateX(4px);
+  }
+  80% {
+    transform: rotate(-5deg);
+  }
+}
+@keyframes gull-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -80%) scale(0.6);
+  }
+}
+@keyframes gull-feather {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0) rotate(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), var(--dy)) rotate(var(--r));
+  }
+}
+@keyframes gull-head-hop-a {
+  40% {
+    transform: translateY(-5px) rotate(-8deg);
+  }
+}
+@keyframes gull-head-hop-b {
+  40% {
+    transform: translateY(-5px) rotate(8deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gull,
+  .gull-body,
+  .gull-head,
+  .gull-says,
+  .gull-feathers i {
+    animation: none !important;
+    transition: none;
+  }
+}

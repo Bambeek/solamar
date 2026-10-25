@@ -1,0 +1,57 @@
+{
+  "checksum": "00000000000000000000000000000000",
+  "roots": {
+    "bookmark_bar": {
+      "children": [
+        { "date_added": "13300000000000000", "guid": "a1", "id": "5", "name": "Docs", "type": "url", "url": "https://docs.example.com/" },
+        {
+          "children": [
+            { "date_added": "13300000000000000", "guid": "a3", "id": "7", "name": "News", "type": "url", "url": "https://news.example.net/" },
+            {
+              "children": [
+                { "guid": "a5", "id": "9", "name": "Deep page", "type": "url", "url": "https://deep.example.org/page?q=1" },
+                { "guid": "a6", "id": "10", "name": "Docs again", "type": "url", "url": "https://docs.example.com/" }
+              ],
+              "date_added": "13300000000000000",
+              "guid": "a4",
+              "id": "8",
+              "name": "Nested",
+              "type": "folder"
+            },
+            { "guid": "a7", "id": "11", "name": "Bookmarklet", "type": "url", "url": "javascript:alert(1)" }
+          ],
+          "date_added": "13300000000000000",
+          "guid": "a2",
+          "id": "6",
+          "name": "Research",
+          "type": "folder"
+        },
+        { "guid": "a8", "id": "12", "name": "Settings", "type": "url", "url": "chrome://settings/" },
+        { "children": [], "guid": "a9", "id": "13", "name": "Empty", "type": "folder" }
+      ],
+      "date_added": "13300000000000000",
+      "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
+      "id": "1",
+      "name": "Bookmarks bar",
+      "type": "folder"
+    },
+    "other": {
+      "children": [
+        { "guid": "b1", "id": "20", "name": "Recipes", "type": "url", "url": "https://food.example.com/soup" },
+        { "guid": "b2", "id": "21", "name": "Blank", "type": "url", "url": "about:blank" }
+      ],
+      "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
+      "id": "2",
+      "name": "Other bookmarks",
+      "type": "folder"
+    },
+    "synced": {
+      "children": [],
+      "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f",
+      "id": "3",
+      "name": "Mobile bookmarks",
+      "type": "folder"
+    }
+  },
+  "version": 1
+}

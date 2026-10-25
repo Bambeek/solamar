@@ -1,0 +1,67 @@
+# Windows installer (NSIS) and macOS disk images. `npm run dist` makes the public build for the machine it runs on,
+# `npm run dist:personal` the personal one (Claude Code plan engine on; see claudeCodeEngineAllowed in
+# src/main/engines.ts). macOS builds need a Mac: .github/workflows/build.yml makes them. Output goes to dist/.
+# Releases: on a v* tag, CI runs `node scripts/dist.mjs --publish`, which uploads the installers and latest*.yml to a
+# draft GitHub release; publishing that release is what the app's updater (src/main/updates.ts) and the site's download
+# buttons see. File names carry no version, so .../releases/latest/download/<name> always means the newest.
+publish:
+  provider: github
+  owner: Bambeek
+  repo: solamar
+  releaseType: draft
+appId: app.solamar.browser
+productName: Solamar
+copyright: Copyright © 2026 Bambeek
+directories:
+  output: dist
+  buildResources: build
+files:
+  - out/**
+  - build/icon.ico
+  - build/icon.png
+  - build/icons/**
+  - package.json
+  - "!**/*.map"
+# Windows reads the taskbar icon picked in Settings > Appearance from a real file, so these stay outside the asar.
+asarUnpack:
+  - build/icons/**
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  icon: build/icon.ico
+  executableName: Solamar
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: Solamar
+  uninstallDisplayName: Solamar
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  deleteAppDataOnUninstall: false
+  artifactName: Solamar-Setup.${ext}
+  license: LICENSE
+mac:
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+  icon: build/icon.png
+  category: public.app-category.productivity
+  # No Apple Developer ID yet: signed ad hoc, which Apple silicon needs to run it at all. A downloaded copy opens
+  # after System Settings > Privacy & Security > Open Anyway. Hardened runtime is for notarized builds.
+  identity: "-"
+  hardenedRuntime: false
+  protocols:
+    - name: Web page
+      schemes: [http, https]
+  extendInfo:
+    # macOS stops an app that asks for these without saying why; sites ask through Solamar's own permission card.
+    NSCameraUsageDescription: Websites you allow can use the camera.
+    NSMicrophoneUsageDescription: Websites you allow can use the microphone.
+    NSLocationWhenInUseUsageDescription: Websites you allow can see your location.
+    NSBluetoothAlwaysUsageDescription: Websites you allow can connect to Bluetooth devices.
+dmg:
+  artifactName: Solamar-${arch}.${ext}

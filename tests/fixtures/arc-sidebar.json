@@ -1,0 +1,380 @@
+{
+ "version": 1,
+ "sidebar": {
+  "containers": [
+   {
+    "global": {}
+   },
+   {
+    "spaces": [
+     "S1",
+     {
+      "id": "S1",
+      "title": "Work",
+      "profile": {
+       "default": true
+      },
+      "containerIDs": [
+       "unpinned",
+       "S1U",
+       "pinned",
+       "S1P"
+      ],
+      "newContainerIDs": [
+       {
+        "unpinned": {
+         "_0": {
+          "shared": {}
+         }
+        }
+       },
+       "S1U",
+       {
+        "pinned": {}
+       },
+       "S1P"
+      ],
+      "customInfo": {
+       "iconType": {
+        "emoji": 0,
+        "emoji_v2": "💼"
+       },
+       "windowTheme": {
+        "primaryColorPalette": {
+         "midTone": {
+          "red": 0.2,
+          "green": 0.4,
+          "blue": 0.8,
+          "alpha": 1,
+          "colorSpace": "extendedSRGB"
+         }
+        }
+       }
+      }
+     },
+     "S2",
+     {
+      "id": "S2",
+      "title": "Fun",
+      "profile": {
+       "custom": {
+        "_0": {
+         "directoryBasename": "Profile 1"
+        }
+       }
+      },
+      "containerIDs": [
+       "unpinned",
+       "S2U",
+       "pinned",
+       "S2P"
+      ],
+      "newContainerIDs": [
+       {
+        "unpinned": {
+         "_0": {
+          "shared": {}
+         }
+        }
+       },
+       "S2U",
+       {
+        "pinned": {}
+       },
+       "S2P"
+      ],
+      "customInfo": {
+       "iconType": {
+        "emoji": 0,
+        "emoji_v2": "🎮"
+       },
+       "windowTheme": {
+        "primaryColorPalette": {
+         "midTone": {
+          "red": 255,
+          "green": 128,
+          "blue": 0,
+          "alpha": 1,
+          "colorSpace": "extendedSRGB"
+         }
+        }
+       }
+      }
+     }
+    ],
+    "topAppsContainerIDs": [
+     {
+      "default": true
+     },
+     "TOP"
+    ],
+    "items": [
+     "TOP",
+     {
+      "id": "TOP",
+      "parentID": null,
+      "childrenIds": [
+       "F1",
+       "F2"
+      ],
+      "title": null,
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "itemContainer": {
+        "containerType": {
+         "topApps": {
+          "default": true
+         }
+        }
+       }
+      }
+     },
+     "F1",
+     {
+      "id": "F1",
+      "parentID": "TOP",
+      "childrenIds": [],
+      "title": null,
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "tab": {
+        "savedURL": "https://mail.example.com/",
+        "savedTitle": "Mail",
+        "timeLastActiveAt": 2,
+        "savedMuteStatus": "allowAudio"
+       }
+      }
+     },
+     "F2",
+     {
+      "id": "F2",
+      "parentID": "TOP",
+      "childrenIds": [],
+      "title": null,
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "tab": {
+        "savedURL": "https://calendar.example.com/",
+        "savedTitle": "Calendar",
+        "timeLastActiveAt": 2,
+        "savedMuteStatus": "allowAudio"
+       }
+      }
+     },
+     "S1P",
+     {
+      "id": "S1P",
+      "parentID": null,
+      "childrenIds": [
+       "T1",
+       "D1"
+      ],
+      "title": null,
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "itemContainer": {
+        "containerType": {
+         "spaceItems": {
+          "_0": "S1"
+         }
+        }
+       }
+      }
+     },
+     "T1",
+     {
+      "id": "T1",
+      "parentID": "S1P",
+      "childrenIds": [],
+      "title": "My doc",
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "tab": {
+        "savedURL": "https://docs.example.com/a",
+        "savedTitle": "Docs A",
+        "timeLastActiveAt": 2,
+        "savedMuteStatus": "allowAudio"
+       }
+      }
+     },
+     "D1",
+     {
+      "id": "D1",
+      "parentID": "S1P",
+      "childrenIds": [
+       "T2",
+       "D2"
+      ],
+      "title": "Research",
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "list": {}
+      }
+     },
+     "T2",
+     {
+      "id": "T2",
+      "parentID": "D1",
+      "childrenIds": [],
+      "title": null,
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "tab": {
+        "savedURL": "https://wiki.example.org/x",
+        "savedTitle": "Wiki X",
+        "timeLastActiveAt": 2,
+        "savedMuteStatus": "allowAudio"
+       }
+      }
+     },
+     "D2",
+     {
+      "id": "D2",
+      "parentID": "D1",
+      "childrenIds": [
+       "T3"
+      ],
+      "title": "Deep",
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "list": {}
+      }
+     },
+     "T3",
+     {
+      "id": "T3",
+      "parentID": "D2",
+      "childrenIds": [],
+      "title": null,
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "tab": {
+        "savedURL": "https://news.example.net/",
+        "savedTitle": "News",
+        "timeLastActiveAt": 2,
+        "savedMuteStatus": "allowAudio"
+       }
+      }
+     },
+     "S1U",
+     {
+      "id": "S1U",
+      "parentID": null,
+      "childrenIds": [
+       "T4"
+      ],
+      "title": null,
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "itemContainer": {
+        "containerType": {
+         "spaceItems": {
+          "_0": "S1"
+         }
+        }
+       }
+      }
+     },
+     "T4",
+     {
+      "id": "T4",
+      "parentID": "S1U",
+      "childrenIds": [],
+      "title": null,
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "tab": {
+        "savedURL": "https://shop.example.com/",
+        "savedTitle": "Shop",
+        "timeLastActiveAt": 2,
+        "savedMuteStatus": "allowAudio"
+       }
+      }
+     },
+     "S2P",
+     {
+      "id": "S2P",
+      "parentID": null,
+      "childrenIds": [],
+      "title": null,
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "itemContainer": {
+        "containerType": {
+         "spaceItems": {
+          "_0": "S2"
+         }
+        }
+       }
+      }
+     },
+     "S2U",
+     {
+      "id": "S2U",
+      "parentID": null,
+      "childrenIds": [
+       "T5",
+       "MISSING"
+      ],
+      "title": null,
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "itemContainer": {
+        "containerType": {
+         "spaceItems": {
+          "_0": "S2"
+         }
+        }
+       }
+      }
+     },
+     "T5",
+     {
+      "id": "T5",
+      "parentID": "S2U",
+      "childrenIds": [],
+      "title": null,
+      "isUnread": false,
+      "createdAt": 1,
+      "originatingDevice": "X",
+      "data": {
+       "tab": {
+        "savedURL": "https://video.example.com/",
+        "savedTitle": "Video",
+        "timeLastActiveAt": 2,
+        "savedMuteStatus": "allowAudio"
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "firebaseSyncState": {}
+}

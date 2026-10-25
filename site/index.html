@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en" class="dl-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The product name lives in brand.js and in this <title>. Change both when renaming. -->
+  <title>Solamar - the browser after Arc</title>
+  <meta name="description" content="A free, local-first browser for Windows and macOS: spaces, tabs you can tell apart, ad blocking built in, Chrome extensions and a password vault. Bring your Arc spaces and your Chrome, Edge or Firefox bookmarks over in one click. No account, no sync server, no telemetry.">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0f1a26" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f5efe3" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/barlow-condensed-900.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add('js')</script>
+  <script src="brand.js"></script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Icon sprite (stroke icons, 24x24) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-tabs" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M3 12h18M7 8V5h6v3M13 5h4v3"/></symbol>
+    <symbol id="i-anchor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M12 7.5V21M8 11h8M4 14a8 8 0 0 0 16 0"/></symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.6v.6M12 17h.01"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2.5V6M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 8.2-8.2M17 6l2 2M15 8l2 2"/></symbol>
+    <symbol id="i-reply" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="m11 8-3 3 3 3M8 11h7"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="m2 13 10 5 10-5"/></symbol>
+    <symbol id="i-pointer" viewBox="0 0 24 24"><path d="M9 9l11 4-5 2-2 5z"/><path d="M5 3.5l1.3 2.3M3 7.5l2.6.5M9.5 3l-.6 2.6"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 3 4.5 6v6c0 4.5 3.2 7.8 7.5 9 4.3-1.2 7.5-4.5 7.5-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-columns" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c1.1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10" cy="7" r="1.2"/><circle cx="14.5" cy="7" r="1.2"/></symbol>
+    <symbol id="i-sidebar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M5.5 8h1.5M5.5 11h1.5M5.5 14h1.5"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-user-off" viewBox="0 0 24 24"><circle cx="10" cy="8" r="4"/><path d="M3 21c0-3.9 3.1-7 7-7 1.4 0 2.7.4 3.8 1.1"/><path d="m16 16 5 5M21 16l-5 5"/></symbol>
+    <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M7 18h10a4 4 0 0 0 1.3-7.8A6 6 0 0 0 7.2 8.6 4.5 4.5 0 0 0 7 18z"/><path d="M3 3l18 18"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c6 0 9.5 7 9.5 7a17 17 0 0 1-3 3.8M6.6 6.6C3.9 8.4 2.5 12 2.5 12S6 19 12 19c1.8 0 3.4-.5 4.8-1.3"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+  </svg>
+
+  <!-- Top bar: logo, nav, a quiet note on when Arc stops, and the download button -->
+  <header class="topbar" id="topbar">
+    <div class="topbar-in">
+      <a class="logo" href="#top" aria-label="Home">
+        <img src="icon.svg" alt="" width="32" height="32">
+        <span class="logo-word" data-brand="name"></span>
+      </a>
+      <nav class="nav" id="nav" aria-label="Main">
+        <ul>
+          <li><a href="#tour">Tour</a></li>
+          <li><a href="#good-stuff">Features</a></li>
+          <li><a href="#moving">From Arc</a></li>
+          <li><a href="#ai">AI</a></li>
+          <li><a href="#claude-code">Claude Code</a></li>
+          <li><a href="#privacy">Privacy</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </nav>
+      <a class="arc-note" href="#moving">
+        <svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg>
+        <span>Arc stops in <b data-days-left>58</b>&nbsp;days</span>
+      </a>
+      <a class="btn-go" data-download href="#download">
+        <svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>
+        <span>Download</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero: a harbour at the visitor's own time of day, props on both sides, title in the middle -->
+    <section class="hero" id="hero" aria-labelledby="hero-title" data-sky="night">
+      <div class="scene" aria-hidden="true">
+        <img class="skyline" id="skyline" src="assets/comic/bg-night.webp" alt="" width="1536" height="768" decoding="async">
+        <div class="sky"></div>
+        <div class="stars"></div>
+        <div class="fog"><i></i><i></i></div>
+        <div class="birds">
+          <svg class="bird b1" viewBox="0 0 32 12"><path d="M1 9q7-9 15 0q8-9 15 0"/></svg>
+          <svg class="bird b2" viewBox="0 0 32 12"><path d="M1 9q7-9 15 0q8-9 15 0"/></svg>
+          <svg class="bird b3" viewBox="0 0 32 12"><path d="M1 9q7-9 15 0q8-9 15 0"/></svg>
+        </div>
+        <div class="prop prop-l" data-depth="18"><span class="beam"></span><img src="assets/comic/lighthouse.webp" alt="" width="746" height="799" decoding="async"></div>
+        <div class="prop prop-r" data-depth="24"><img src="assets/comic/crane.webp" alt="" width="800" height="791" decoding="async"></div>
+        <svg class="waves" viewBox="0 0 2880 120" preserveAspectRatio="none">
+          <path class="wv wv1" d="M0 60 Q90 30 180 60 T360 60 T540 60 T720 60 T900 60 T1080 60 T1260 60 T1440 60 T1620 60 T1800 60 T1980 60 T2160 60 T2340 60 T2520 60 T2700 60 T2880 60 V120 H0z"/>
+          <path class="wv wv2" d="M0 80 Q120 55 240 80 T480 80 T720 80 T960 80 T1200 80 T1440 80 T1680 80 T1920 80 T2160 80 T2400 80 T2640 80 T2880 80 V120 H0z"/>
+        </svg>
+      </div>
+
+      <div class="hero-mid">
+        <p class="hero-logo fx-up" style="--d:0"><img src="icon.svg" alt="" width="40" height="40"><span data-brand="name"></span></p>
+        <h1 id="hero-title" class="fx-up" style="--d:1"><span>The browser</span> <span>after Arc</span></h1>
+        <p class="hero-lead fx-up" style="--d:2">Free for Windows and macOS. Spaces, tabs you can tell apart and an ad blocker built in. Your Arc spaces come over in one click. No account, no telemetry.</p>
+        <div class="hero-actions fx-up" style="--d:3">
+          <a class="btn-main" data-download href="#download">
+            <svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>
+            Download free
+          </a>
+          <a class="btn-quiet" href="#good-stuff">See what it does</a>
+        </div>
+        <ul class="hero-meta fx-up" style="--d:4">
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Free</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>No account</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Open source</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- The real app, standing on the water between the lighthouse and the crane -->
+    <figure class="hero-shot fx-up" style="--d:5">
+      <div class="shot-frame">
+        <picture>
+          <source srcset="assets/window-light.webp" media="(prefers-color-scheme: light)">
+          <img src="assets/window-dark.webp" width="1280" height="760" decoding="async"
+               alt="The browser with three spaces as pills in the top bar and a row of titled tabs: three video tabs from the same site, each with its title and a close button, and a Reading group.">
+        </picture>
+      </div>
+    </figure>
+
+    <!-- A tour of the real app: pick a view on the left, the screenshot changes on the right -->
+    <section class="sec tour" id="tour" aria-labelledby="tour-title">
+      <div class="wrap">
+        <h2 class="h2 reveal" id="tour-title">Take a look around</h2>
+        <p class="sec-lead reveal">Real screenshots of <span data-brand="name"></span>, not mock-ups. This is what you download.</p>
+        <div class="tour-grid" data-tour>
+          <div class="tour-list" role="tablist" aria-label="Views of the browser">
+            <button role="tab" id="tour-t-tabs" aria-controls="tour-stage" aria-selected="true" class="on" data-shot="tabs">
+              <svg class="ic" aria-hidden="true"><use href="#i-tabs"/></svg>
+              <span><b>Tabs you can tell apart</b><small>Spaces as pills in the top bar, every tab with its title and close button. Light or dark, per space.</small></span>
+              <i class="tour-bar" aria-hidden="true"></i>
+            </button>
+            <button role="tab" id="tour-t-command" aria-controls="tour-stage" aria-selected="false" data-shot="command">
+              <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+              <span><b>Command bar</b><small><kbd>Ctrl</kbd>+<kbd>T</kbd> to search, open a site, jump to a tab or ask AI.</small></span>
+              <i class="tour-bar" aria-hidden="true"></i>
+            </button>
+            <button role="tab" id="tour-t-peek" aria-controls="tour-stage" aria-selected="false" data-shot="peek">
+              <svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg>
+              <span><b>Peek</b><small>A link opens over the page. Keep it as a tab, or press Esc.</small></span>
+              <i class="tour-bar" aria-hidden="true"></i>
+            </button>
+            <button role="tab" id="tour-t-split" aria-controls="tour-stage" aria-selected="false" data-shot="split">
+              <svg class="ic" aria-hidden="true"><use href="#i-columns"/></svg>
+              <span><b>Split view</b><small>Two pages side by side in one window.</small></span>
+              <i class="tour-bar" aria-hidden="true"></i>
+            </button>
+            <button role="tab" id="tour-t-boost" aria-controls="tour-stage" aria-selected="false" data-shot="boost">
+              <svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg>
+              <span><b>Boosts and Zap</b><small>Your colours and fonts for any site. Zapped banners stay gone.</small></span>
+              <i class="tour-bar" aria-hidden="true"></i>
+            </button>
+            <button role="tab" id="tour-t-ai" aria-controls="tour-stage" aria-selected="false" data-shot="ai">
+              <svg class="ic" aria-hidden="true"><use href="#i-sparkles"/></svg>
+              <span><b>AI that does it for you</b><small>The gull fills in a form step by step and sends nothing without you.</small></span>
+              <i class="tour-bar" aria-hidden="true"></i>
+            </button>
+            <button role="tab" id="tour-t-settings" aria-controls="tour-stage" aria-selected="false" data-shot="settings">
+              <svg class="ic" aria-hidden="true"><use href="#i-palette"/></svg>
+              <span><b>Make it yours</b><small>Pick the app icon, the layout and the colours of each space.</small></span>
+              <i class="tour-bar" aria-hidden="true"></i>
+            </button>
+            <button role="tab" id="tour-t-sidebar" aria-controls="tour-stage" aria-selected="false" data-shot="sidebar">
+              <svg class="ic" aria-hidden="true"><use href="#i-sidebar"/></svg>
+              <span><b>Prefer Arc's sidebar?</b><small>One setting brings the vertical sidebar back.</small></span>
+              <i class="tour-bar" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="tour-stage" id="tour-stage" role="tabpanel" aria-live="polite">
+            <div class="shot-frame tour-frame">
+              <!-- the other look from the hero's, so the tour opens on something new: light on a dark page, dark on a light one -->
+              <picture class="tour-shot on" data-shot="tabs">
+                <source srcset="assets/window-dark.webp" media="(prefers-color-scheme: light)">
+                <img src="assets/window-light.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="The browser with three spaces as pills in the top bar and a row of titled tabs: three video tabs from the same site, each with its title and a close button, and a Reading group.">
+              </picture>
+              <img class="tour-shot" data-shot="command" src="assets/tour-command.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="The command bar over the page, with a typed question and the choices Search, Ask AI and a sharper search.">
+              <img class="tour-shot" data-shot="peek" src="assets/peek.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="A news page shown in a Peek card over a pinned tab, with buttons to open it as a tab or in split view.">
+              <img class="tour-shot" data-shot="split" src="assets/tour-split.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="Split view: a video on the left and a news page on the right, in one window.">
+              <img class="tour-shot" data-shot="boost" src="assets/boost.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="The Boost editor next to a page shown with warm colours and a serif font, its newsletter banner zapped away.">
+              <img class="tour-shot" data-shot="ai" src="assets/agent.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="The AI panel with the gull: a request to fill in a trip form, the steps it took, and the form filled in with a name and a city.">
+              <img class="tour-shot" data-shot="settings" src="assets/tour-settings.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="Settings, Appearance: a choice of app icons, the tab layout and the colours of spaces.">
+              <img class="tour-shot" data-shot="sidebar" src="assets/tour-sidebar.webp" width="1920" height="1140" loading="lazy" decoding="async" alt="The classic layout: spaces and tabs in a vertical sidebar on the left, the page on the right.">
+            </div>
+            <p class="tour-caption" aria-hidden="true"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- The four headline features, as big illustrated cards -->
+    <section class="sec" id="good-stuff" aria-labelledby="good-title">
+      <div class="wrap">
+        <h2 class="h2 reveal" id="good-title">The good stuff</h2>
+        <div class="big-cards">
+          <article class="big-card reveal" style="--d:0;--tint:#ffc928">
+            <span class="big-pic"><img src="assets/comic/card-tabs.webp" alt="" width="640" height="640" loading="lazy" decoding="async"></span>
+            <h3 class="big-title">Tabs you can tell apart</h3>
+            <p class="big-hint">Every tab shows its title and its own close button. Drag to reorder, fold folders into groups, or switch to Arc's vertical sidebar.</p>
+          </article>
+          <article class="big-card reveal" style="--d:1;--tint:#ff4d4d">
+            <span class="big-pic"><img src="assets/comic/card-zap.webp" alt="" width="640" height="640" loading="lazy" decoding="async"></span>
+            <h3 class="big-title">Zap and Boosts</h3>
+            <p class="big-hint">Click a banner or popup and it is gone for good. Boosts give any site your own colours, fonts and CSS.</p>
+          </article>
+          <article class="big-card reveal" style="--d:2;--tint:#19c3b1">
+            <span class="big-pic"><img src="assets/comic/card-peek.webp" alt="" width="640" height="640" loading="lazy" decoding="async"></span>
+            <h3 class="big-title">Peek</h3>
+            <p class="big-hint">Shift+click a link and it opens over the page instead of replacing it. Keep it as a tab, or press Esc.</p>
+          </article>
+          <article class="big-card reveal" style="--d:3;--tint:#8b5cf6">
+            <span class="big-pic"><img src="assets/comic/card-agent.webp" alt="" width="640" height="640" loading="lazy" decoding="async"></span>
+            <h3 class="big-title">AI, only if you want it</h3>
+            <p class="big-hint">Writing help, sharper search and an agent that fills in forms, on a model on your computer or on Claude.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Moving over from Arc and other browsers -->
+    <section class="sec" id="moving" aria-labelledby="moving-title">
+      <div class="wrap">
+        <h2 class="h2 reveal" id="moving-title">Moving out of Arc</h2>
+        <div class="move-grid">
+          <article class="move-card reveal" style="--d:0">
+            <div class="move-text">
+              <h3>Arc spaces, one click</h3>
+              <p><span data-brand="name"></span> reads the sidebar Arc keeps on this computer, read-only, and rebuilds it: spaces with their colours and icons, pinned tabs and folders. Nothing is uploaded and nothing in Arc changes.</p>
+            </div>
+            <img class="move-art bob" src="assets/comic/boxes.webp" alt="" width="311" height="400" loading="lazy" decoding="async">
+          </article>
+          <article class="move-card reveal" style="--d:1">
+            <div class="move-text">
+              <h3>Or from any browser</h3>
+              <p>Chrome, Edge, Brave, Firefox and Safari: bookmarks and history in one click. Passwords come in from the CSV file they export.</p>
+            </div>
+            <img class="move-art bob" style="--bd:-1.2s" src="assets/comic/chest.webp" alt="" width="344" height="400" loading="lazy" decoding="async">
+          </article>
+          <article class="move-card move-clock reveal" style="--d:2">
+            <div class="move-text">
+              <h3>Arc stops on December 22</h3>
+              <p>The Browser Company ends Arc on December 22, 2026. There is time to move at your own pace.</p>
+            </div>
+            <div class="cal" aria-hidden="true"><span class="cal-m">Dec</span><span class="cal-d">22</span></div>
+            <p class="days-left"><b data-days-left>58</b> days left</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Everything else on board -->
+    <section class="sec" id="features" aria-labelledby="board-title">
+      <div class="wrap">
+        <h2 class="h2 reveal" id="board-title">Everything on board</h2>
+        <div class="tiles">
+          <article class="tile reveal" style="--d:0;--glow:#ff6b6b">
+            <img class="tile-art" src="assets/comic/shield.webp" alt="" width="309" height="320" loading="lazy" decoding="async">
+            <h3>Ad blocking, built in</h3>
+            <p>On from the first launch, YouTube included. Ghostery's open engine with uBlock Origin lists. Allow a site in one click.</p>
+          </article>
+          <article class="tile reveal" style="--d:1;--glow:#3ddc97">
+            <img class="tile-art" src="assets/comic/vault.webp" alt="" width="320" height="308" loading="lazy" decoding="async">
+            <h3>Passwords, saved and filled</h3>
+            <p>Sign in once and it offers to save, encrypted with your system's keychain. It fills only on the site it belongs to.</p>
+          </article>
+          <article class="tile reveal" style="--d:2;--glow:#a78bfa">
+            <img class="tile-art" src="assets/comic/puzzle.webp" alt="" width="320" height="230" loading="lazy" decoding="async">
+            <h3>Chrome extensions</h3>
+            <p>Add to Chrome from the Web Store. You see what an extension can do, in plain words, before it goes in.</p>
+          </article>
+          <article class="tile reveal" style="--d:0;--glow:#ffd23f">
+            <img class="tile-art" src="assets/comic/compass.webp" alt="" width="319" height="320" loading="lazy" decoding="async">
+            <h3>Command bar</h3>
+            <p>Press <kbd>Ctrl</kbd>+<kbd>T</kbd> to search, open a site, jump to a tab or run an action.</p>
+          </article>
+          <article class="tile reveal" style="--d:1;--glow:#19c3b1">
+            <img class="tile-art" src="assets/comic/radio.webp" alt="" width="298" height="320" loading="lazy" decoding="async">
+            <h3>Mini player</h3>
+            <p>Music in another tab gets play, pause and picture in picture right in the top bar.</p>
+            <p class="tile-stat"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span> Now playing</p>
+          </article>
+          <article class="tile reveal" style="--d:2;--glow:#60a5fa">
+            <img class="tile-art" src="assets/comic/mask.webp" alt="" width="320" height="186" loading="lazy" decoding="async">
+            <h3>Private spaces</h3>
+            <p>A space that saves nothing: no history, no cookies after you close it, no extensions.</p>
+          </article>
+          <article class="tile reveal" style="--d:0;--glow:#ff9f43">
+            <img class="tile-art" src="assets/comic/buoy.webp" alt="" width="320" height="280" loading="lazy" decoding="async">
+            <h3>Back after a crash</h3>
+            <p>Tabs come back with their history, scroll position and even what you were typing.</p>
+          </article>
+          <article class="tile reveal" style="--d:1;--glow:#818cf8">
+            <img class="tile-art" src="assets/comic/moon.webp" alt="" width="320" height="289" loading="lazy" decoding="async">
+            <h3>Light on memory</h3>
+            <p>Tabs you have not looked at go to sleep, and today's tabs archive themselves after 12 hours.</p>
+          </article>
+          <article class="tile reveal" style="--d:2;--glow:#e9b872">
+            <img class="tile-art" src="assets/comic/logbook.webp" alt="" width="320" height="247" loading="lazy" decoding="async">
+            <h3>History and downloads</h3>
+            <p>Searchable history by day, and downloads you can pause, resume and retry.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI -->
+    <section class="sec ai" id="ai" aria-labelledby="ai-title">
+      <div class="wrap">
+        <h2 class="h2 reveal" id="ai-title">AI that does the work</h2>
+        <p class="sec-lead reveal">Off until you switch it on. Then pick what runs each feature: a model on your own computer, or Claude.</p>
+
+        <div class="engines">
+          <article class="engine reveal" style="--d:0">
+            <span class="engine-ic"><svg class="ic" aria-hidden="true"><use href="#i-cpu"/></svg></span>
+            <div><h3>Local model</h3><p>Runs through Ollama on this computer. Nothing leaves your computer.</p></div>
+          </article>
+          <article class="engine reveal" style="--d:1">
+            <span class="engine-ic"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span>
+            <div><h3>Your Anthropic API key</h3><p>Claude on your own API account, key kept in the system keychain.</p></div>
+          </article>
+          <article class="engine reveal" style="--d:2">
+            <span class="engine-ic"><svg class="ic" aria-hidden="true"><use href="#i-terminal"/></svg></span>
+            <div><h3>Your Claude Code plan</h3><p>Personal builds can use the Claude Code already signed in on your computer.</p></div>
+          </article>
+        </div>
+
+        <div class="agent reveal">
+          <div class="agent-copy">
+            <h3 class="h3">Do it for me</h3>
+            <p>Tell the agent what to do on the page you are looking at, like filling in a form or collecting every address on a page. It reads, clicks and types, and shows each step. Payments always wait for your click, and you can stop it any time.</p>
+            <ol class="steps" aria-label="Example run">
+              <li style="--s:0"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Read the page</li>
+              <li style="--s:1"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Typed the name</li>
+              <li style="--s:2"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Typed the city</li>
+              <li style="--s:3" class="done">Done. The form is filled in; nothing was sent.</li>
+            </ol>
+          </div>
+          <div class="panel-frame agent-shot">
+            <img src="assets/agent.webp" width="1280" height="760" loading="lazy" decoding="async"
+                 alt="The browser with the AI panel in Do it for me mode: a request to fill in a trip form, a list of steps, and the form filled in with a name and a city.">
+          </div>
+        </div>
+
+        <div class="mini-cards">
+          <article class="mini reveal" style="--d:0"><span class="mini-ic"><svg class="ic" aria-hidden="true"><use href="#i-reply"/></svg></span><h3>Draft a reply</h3><p>In a mail or chat box, press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd>. It writes in your voice and leaves it for you to send.</p></article>
+          <article class="mini reveal" style="--d:1"><span class="mini-ic"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span><h3>Better search</h3><p>Press <kbd>Tab</kbd> in the command bar for a sharper search, or ask and get the answer right in the bar.</p></article>
+          <article class="mini reveal" style="--d:2"><span class="mini-ic"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></span><h3>Ask about a page</h3><p><kbd>Ctrl</kbd>+<kbd>J</kbd> gives you the gist of a long page, or answers a question about it.</p></article>
+          <article class="mini reveal" style="--d:3"><span class="mini-ic"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg></span><h3>Tidy tabs</h3><p>It suggests groups for today's tabs. Nothing moves until you apply.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Claude Code -->
+    <section class="sec cc" id="claude-code" aria-labelledby="cc-title">
+      <div class="wrap cc-grid">
+        <div class="cc-art reveal">
+          <img class="bob" src="assets/comic/helm.webp" alt="" width="392" height="520" loading="lazy" decoding="async">
+        </div>
+        <div class="cc-copy reveal" style="--d:1">
+          <h2 class="h2" id="cc-title">Claude Code takes the helm</h2>
+          <p>Turn on <strong>Settings &rsaquo; Claude Code</strong> and <span data-brand="name"></span> runs a local MCP server on this computer. Claude Code can then open tabs, read pages, click and type, in its own Claude space or in tabs you share with it.</p>
+          <div class="code">
+            <div class="code-head">
+              <span>Run once in a terminal</span>
+              <button class="copy-btn" type="button" data-copy="#mcp-cmd">
+                <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span class="copy-label">Copy</span>
+              </button>
+            </div>
+            <pre><code id="mcp-cmd"></code></pre>
+          </div>
+          <p class="sr-only" role="status" id="copy-status"></p>
+          <ul class="guards">
+            <li><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg><div><b>Its own space</b><span>Or only the tabs you share with it.</span></div></li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-pointer"/></svg><div><b>Your click for payments</b><span>Also for sending and deleting, if you want.</span></div></li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><div><b>No secrets typed by AI</b><span>Passwords and card numbers stay out of reach.</span></div></li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg><div><b>Watch or stop</b><span>A pill in the top bar, any time.</span></div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy -->
+    <section class="stats" id="privacy" aria-labelledby="privacy-title">
+      <div class="wrap">
+        <h2 class="h2 reveal" id="privacy-title">A browser, not a service</h2>
+        <ul class="stat-row">
+          <li class="stat reveal" style="--d:0"><svg class="ic" aria-hidden="true"><use href="#i-user-off"/></svg><b>No account</b><span>Nothing to create, nothing to sign in to.</span></li>
+          <li class="stat reveal" style="--d:1"><svg class="ic" aria-hidden="true"><use href="#i-cloud-off"/></svg><b>No sync server</b><span>Your tabs never pass through a server of ours.</span></li>
+          <li class="stat reveal" style="--d:2"><svg class="ic" aria-hidden="true"><use href="#i-eye-off"/></svg><b>No telemetry</b><span>No analytics and no usage tracking.</span></li>
+          <li class="stat reveal" style="--d:3"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg><b>Encrypted where it matters</b><span>Passwords and an API key use your system's keychain.</span></li>
+        </ul>
+        <p class="stats-fine reveal">Your spaces, tabs, passwords and settings stay on your computer. Imports only read your other browsers' files, and private spaces write nothing to disk.</p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="sec" id="faq" aria-labelledby="faq-title">
+      <div class="wrap faq-wrap">
+        <h2 class="h2 reveal" id="faq-title">Questions</h2>
+        <div class="faq reveal">
+          <details>
+            <summary>Is it free?<span class="faq-x" aria-hidden="true"><svg class="ic"><use href="#i-plus"/></svg></span></summary>
+            <div class="faq-a"><p>Yes. <span data-brand="name"></span> is free and there is no account to create. If you choose Claude with your own API key, Anthropic bills your API account directly; the local model costs nothing.</p></div>
+          </details>
+          <details>
+            <summary>Is it open source?<span class="faq-x" aria-hidden="true"><svg class="ic"><use href="#i-plus"/></svg></span></summary>
+            <div class="faq-a"><p>Yes. The source is published under the GNU GPL v3 (or later): you can read it, build it yourself and change it, and versions others share stay open too.</p></div>
+          </details>
+          <details>
+            <summary>Which operating systems does it run on?<span class="faq-x" aria-hidden="true"><svg class="ic"><use href="#i-plus"/></svg></span></summary>
+            <div class="faq-a"><p>Windows 10 and 11, and macOS on Apple silicon and Intel Macs. The installers are not code-signed yet: Windows may say "Windows protected your PC" (More info, then Run anyway), and a Mac asks you once to allow it in System Settings, Privacy &amp; Security. The Windows app updates itself. Linux is not supported yet.</p></div>
+          </details>
+          <details>
+            <summary>What comes over from Arc and my old browser?<span class="faq-x" aria-hidden="true"><svg class="ic"><use href="#i-plus"/></svg></span></summary>
+            <div class="faq-a"><p>From Arc: your spaces with their colours and icons, pinned tabs and folders. From Chrome, Edge, Brave, Firefox and Safari: bookmarks and history. Passwords come in from the CSV file those browsers and password managers export. Every import only reads; nothing in the other browser changes.</p></div>
+          </details>
+          <details>
+            <summary>Do Chrome extensions work?<span class="faq-x" aria-hidden="true"><svg class="ic"><use href="#i-plus"/></svg></span></summary>
+            <div class="faq-a"><p>Yes, Manifest V3 extensions from the Chrome Web Store install with Add to Chrome and update on their own. A few Chrome-only features may not work yet.</p></div>
+          </details>
+          <details>
+            <summary>Can I keep a vertical sidebar like Arc?<span class="faq-x" aria-hidden="true"><svg class="ic"><use href="#i-plus"/></svg></span></summary>
+            <div class="faq-a"><p>Yes. Settings &rsaquo; General &rsaquo; Layout switches between the top bar with tabs and the classic sidebar, any time.</p></div>
+          </details>
+          <details>
+            <summary>Does it sync between devices?<span class="faq-x" aria-hidden="true"><svg class="ic"><use href="#i-plus"/></svg></span></summary>
+            <div class="faq-a"><p>No. There is no account and no sync server. Your spaces, tabs and settings live on your computer.</p></div>
+          </details>
+          <details>
+            <summary>Do I have to use AI?<span class="faq-x" aria-hidden="true"><svg class="ic"><use href="#i-plus"/></svg></span></summary>
+            <div class="faq-a"><p>No. AI is off until you turn it on in Settings, and you choose which engine runs each feature.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Download -->
+    <section class="sec download" id="download" aria-labelledby="download-title">
+      <div class="wrap">
+        <div class="dl reveal">
+          <img class="dl-gull" src="assets/comic/gull.webp" alt="" width="307" height="520" loading="lazy" decoding="async">
+          <div class="dl-copy">
+            <h2 class="h2" id="download-title">Get <span data-brand="name"></span> for Windows and macOS</h2>
+            <p>Free. No account. Your Arc spaces in one click.</p>
+            <div class="dl-ready">
+              <a class="btn-main" data-download="windows" href="#download">
+                <svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>
+                Windows
+              </a>
+              <a class="btn-main" data-download="mac" href="#download">
+                <svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>
+                macOS
+              </a>
+            </div>
+            <p class="fine dl-note">Intel Mac? <a href="https://github.com/Bambeek/solamar/releases/latest/download/Solamar-x64.dmg">Get the Intel version</a>. Not code-signed yet, so Windows and macOS ask once before the first start.</p>
+            <div class="dl-soon">
+              <p class="soon"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg>Windows and macOS installers coming soon</p>
+              <p class="fine">Both installers are built and are being signed. Arc keeps working until December 22, 2026, so there is time to switch.</p>
+            </div>
+            <p class="fine">Windows 10 and 11 &middot; macOS, Apple silicon and Intel &middot; Free &middot; Open source, GPL-3.0</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="foot-sky" aria-hidden="true">
+      <img class="foot-gull" src="assets/comic/gull-peek.webp" alt="" width="420" height="265" loading="lazy" decoding="async">
+    </div>
+    <div class="wrap foot-in">
+      <div class="foot-brand">
+        <a class="logo" href="#top"><img src="icon.svg" alt="" width="30" height="30"><span class="logo-word" data-brand="name"></span></a>
+        <p>A free, local-first browser for Windows and macOS.</p>
+      </div>
+      <nav aria-label="Footer">
+        <ul class="foot-nav">
+          <li><a href="#good-stuff">Features</a></li>
+          <li><a href="#moving">From Arc</a></li>
+          <li><a href="#ai">AI</a></li>
+          <li><a href="#claude-code">Claude Code</a></li>
+          <li><a href="#privacy">Privacy</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#download" data-download>Download</a></li>
+          <li data-repo hidden><a href="#" data-repo-link>Source</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="wrap foot-legal">
+      <p>&copy; <span id="year">2026</span> <span data-brand="name"></span>. An independent project. Illustrations made for this site.</p>
+      <p>Arc is a trademark of The Browser Company of New York. Chrome is a trademark of Google LLC. Claude and Claude Code are trademarks of Anthropic.</p>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+// Checks that shortcuts reach the main process while a web page has focus (real input path via sendInputEvent).
+import { _electron as electron } from 'playwright'
+const [userData] = process.argv.slice(2)
+const app = await electron.launch({ args: ['.'], env: { ...process.env, SOLAMAR_HIDDEN: '1', SOLAMAR_USER_DATA: userData } })
+const ui = await (async () => { for (;;) { const p = app.windows().find((w) => w.url().endsWith('#ui')); if (p) return p; await new Promise((r) => setTimeout(r, 200)) } })()
+await ui.waitForLoadState('domcontentloaded')
+const call = (m, ...a) => ui.evaluate(([m, a]) => window.solamar.call(m, ...a), [m, a])
+await call('updateSettings', { onboarded: true })
+await call('openTab', 'https://example.com/')
+await new Promise((r) => setTimeout(r, 2000))
+const press = (keyCode, modifiers) => app.evaluate(({ webContents }, [keyCode, modifiers]) => {
+  const wc = webContents.getAllWebContents().find((w) => w.getURL().startsWith('https://example.com'))
+  wc.sendInputEvent({ type: 'keyDown', keyCode, modifiers })
+  wc.sendInputEvent({ type: 'keyUp', keyCode, modifiers })
+  return !!wc
+}, [keyCode, modifiers])
+console.log('page found', await press('T', ['control']))
+await new Promise((r) => setTimeout(r, 300))
+console.log('Ctrl+T ->', (await call('state')).overlay?.kind ?? 'none')
+await call('closeOverlay')
+await press('S', ['control'])
+await new Promise((r) => setTimeout(r, 300))
+console.log('Ctrl+S -> sidebarVisible', (await call('state')).settings.sidebarVisible)
+const codes = await app.evaluate(({ webContents }) => new Promise((resolve) => {
+  const wc = webContents.getAllWebContents().find((w) => w.getURL().startsWith('https://example.com'))
+  wc.once('before-input-event', (_e, input) => resolve({ key: input.key, code: input.code, control: input.control }))
+  wc.sendInputEvent({ type: 'keyDown', keyCode: 'L', modifiers: ['control'] })
+}))
+console.log('before-input-event fields', JSON.stringify(codes))
+await app.close()

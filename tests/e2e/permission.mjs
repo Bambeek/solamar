@@ -1,0 +1,46 @@
+// Site permission prompt: Solamar's own card, remembered answers, no native dialog.
+import { _electron as electron } from 'playwright'
+import { startMockAnthropic } from './mock-anthropic.mjs'
+const [userData, out] = process.argv.slice(2)
+const mock = await startMockAnthropic()
+const app = await electron.launch({ args: ['.'], env: { ...process.env, SOLAMAR_HIDDEN: '1', SOLAMAR_USER_DATA: userData } })
+const page = async (h) => { for (;;) { const p = app.windows().find((w) => w.url().endsWith('#' + h)); if (p) return p; await new Promise((r) => setTimeout(r, 200)) } }
+const ui = await page('ui'), overlay = await page('overlay')
+await ui.waitForLoadState('domcontentloaded')
+const call = (m, ...a) => ui.evaluate(([m, a]) => window.solamar.call(m, ...a), [m, a])
+const state = () => call('state')
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+const results = []
+const check = (n, ok, d = '') => (results.push(ok), console.log(`${ok ? 'PASS' : 'FAIL'} ${n}${d ? ' - ' + d : ''}`))
+await call('updateSettings', { onboarded: true })
+await call('openTab', mock.url + '/geo')
+await sleep(1500)
+const tab = app.windows().find((w) => w.url().endsWith('/geo'))
+const ask = () => tab.evaluate(() => document.getElementById('b').click())
+await ask()
+let p = null
+for (let i = 0; i < 30 && !p; i++) { p = (await state()).permission; if (!p) await sleep(100) }
+check('location request shows Solamar card', p?.permission === 'geolocation' && p?.site === '127.0.0.1', JSON.stringify(p))
+const s1 = await state()
+check('card is a small overlay, not full window', s1.overlay?.kind === 'permission')
+const bounds = await app.evaluate(({ BaseWindow }) => BaseWindow.getAllWindows()[0].contentView.children.at(-1).getBounds())
+check('overlay bounds are the card size', bounds.width <= 400 && bounds.height <= 220, JSON.stringify(bounds))
+await sleep(400)
+await overlay.screenshot({ path: `${out}/permission-card.png` })
+await call('permissionDecide', p.id, 'allow')
+await sleep(300)
+const s2 = await state()
+check('Allow is remembered for the site', s2.settings.sitePermissions['127.0.0.1|geolocation'] === 'allow' && !s2.permission && !s2.overlay)
+await ask()
+await sleep(800)
+check('second request needs no card', !(await state()).permission)
+await call('forgetPermission', '127.0.0.1|geolocation')
+check('Forget removes it', !(await state()).settings.sitePermissions['127.0.0.1|geolocation'])
+await ask()
+for (let i = 0; i < 30 && !(await state()).permission; i++) await sleep(100)
+const p3 = (await state()).permission
+await call('permissionDecide', p3.id, 'dismiss')
+await sleep(300)
+check('dismiss blocks without remembering', !(await state()).settings.sitePermissions['127.0.0.1|geolocation'] && !(await state()).permission)
+await app.close(); mock.server.close()
+console.log(`${results.filter(Boolean).length}/${results.length} passed`)

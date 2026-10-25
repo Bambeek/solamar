@@ -1,0 +1,60 @@
+/* Generated from leapfrog/design/tokens*.json by tokens.py (WCAG AA checked). Do not edit by hand. */
+:root {
+  --color-bg: #f4f3f8;
+  --color-surface: #ffffff;
+  --color-surface-2: #f1f0f6;
+  --color-border: #e2e0ea;
+  --color-border-input: #85819a;
+  --color-text: #17151f;
+  --color-text-muted: #5c586b;
+  --color-accent: #5b4bdb;
+  --color-on-accent: #ffffff;
+  --color-danger: #c22b3a;
+  --color-success: #1d7a46;
+  --color-focus: #5b4bdb;
+  --font-sans: 'Inter Variable', 'Segoe UI Variable', system-ui, sans-serif;
+  --font-mono: 'Cascadia Code', ui-monospace, monospace;
+  --text-xs: 11px;
+  --leading-xs: 14px;
+  --text-sm: 12.5px;
+  --leading-sm: 16px;
+  --text-md: 13.5px;
+  --leading-md: 18px;
+  --text-lg: 16px;
+  --leading-lg: 22px;
+  --text-xl: 20px;
+  --leading-xl: 26px;
+  --space-0: 0px;
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 12px;
+  --space-6: 16px;
+  --space-7: 20px;
+  --space-8: 24px;
+  --space-9: 32px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.08);
+  --shadow-md: 0 6px 20px rgba(0,0,0,.14);
+  --shadow-lg: 0 24px 60px rgba(0,0,0,.28);
+}
+
+[data-mode='dark'] {
+  --color-bg: #15141b;
+  --color-surface: #1f1d27;
+  --color-surface-2: #2a2734;
+  --color-border: #36333f;
+  --color-border-input: #8a8699;
+  --color-text: #f2f0f7;
+  --color-text-muted: #aaa6b8;
+  --color-accent: #a99cff;
+  --color-on-accent: #17122e;
+  --color-danger: #ff7d86;
+  --color-success: #5fd394;
+  --color-focus: #a99cff;
+}

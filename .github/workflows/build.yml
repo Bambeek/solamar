@@ -1,0 +1,73 @@
+# Builds Solamar on real machines: the macOS disk images on a Mac (Apple silicon runner, both architectures) and
+# the Windows installer, then smoke-tests each packaged app. Run it from the Actions tab (files land as workflow
+# artifacts), or push a v* tag matching package.json's version: then both jobs upload to that version's draft GitHub
+# release (installers, blockmaps, latest.yml and latest-mac.yml for the updater). Publishing the draft releases it.
+name: Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      personal:
+        description: Personal build (AI features may run on your Claude Code plan; keep it to yourself)
+        type: boolean
+        default: false
+      platform:
+        description: Which builds
+        type: choice
+        options: [both, mac, windows]
+        default: both
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write # the tag build uploads to the release
+
+jobs:
+  mac:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.platform != 'windows' }}
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npx vitest run
+      - run: node scripts/dist.mjs ${{ inputs.personal && '--personal' || '' }} ${{ startsWith(github.ref, 'refs/tags/v') && '--publish' || '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Packaged app loads a page
+        run: node tests/e2e/packaged.mjs "$RUNNER_TEMP/profile-packaged"
+      - name: macOS checks and a screenshot
+        run: node tests/e2e/mac.mjs "$RUNNER_TEMP/profile-mac" "$RUNNER_TEMP/solamar-mac.png"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: solamar-mac
+          path: dist/*.dmg
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mac-screenshot
+          path: ${{ runner.temp }}/solamar-mac.png
+
+  windows:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.platform != 'mac' }}
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: node scripts/dist.mjs ${{ inputs.personal && '--personal' || '' }} ${{ startsWith(github.ref, 'refs/tags/v') && '--publish' || '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Packaged app loads a page
+        run: node tests/e2e/packaged.mjs "$env:RUNNER_TEMP/profile-packaged"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: solamar-windows
+          path: dist/*.exe

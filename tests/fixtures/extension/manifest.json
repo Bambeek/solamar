@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Solamar Test Extension",
+  "version": "1.0.0",
+  "description": "Content script, service worker, chrome.tabs and an action popup, for Solamar's e2e test.",
+  "permissions": ["tabs"],
+  "host_permissions": ["http://127.0.0.1/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [{ "matches": ["http://127.0.0.1/*"], "js": ["content.js"], "run_at": "document_idle" }],
+  "action": { "default_title": "Solamar test", "default_popup": "popup.html" }
+}
