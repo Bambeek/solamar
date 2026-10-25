@@ -89,6 +89,14 @@ await app.evaluate(({ webContents }, u) => {
 }, `http://localhost:${port}/b`)
 s = await until(async () => (!(await state()).peek ? state() : null))
 check('Escape closes Peek', !!s && !s.peek && !s.overlay)
+await one.click('#ext', { modifiers: ['Shift'] })
+await until(async () => (await state()).peek)
+await call('promotePeek', true)
+s = await until(async () => ((await state()).window.split.length === 2 ? state() : null))
+check('Open in split view puts the page next to the tab it came from', !!s && s.window.split[0] === pinnedId && !!s.items.find((i) => i.id === s.window.split[1])?.url?.includes('localhost') && !s.peek, JSON.stringify(s?.window?.split))
+await call('unsplit')
+if (s) await call('closeTab', s.window.split[1])
+await call('activate', pinnedId)
 
 // ---------- Boosts ----------
 await call('openBoost')

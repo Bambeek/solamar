@@ -1023,7 +1023,8 @@ export class Browser {
     this.wire(wc, id)
     this.extensions.addTab(wc)
     this.closeOverlay()
-    if (split && from && spaceId === this.doc.window.focusedSpaceId) this.splitWith(id)
+    // Split with the tab the Peek came from: by now the new tab may already be the active one.
+    if (split && from && spaceId === this.doc.window.focusedSpaceId) this.splitWith(id, from)
     else this.activate(id)
   }
 
@@ -1369,10 +1370,9 @@ export class Browser {
 
   // ---------- split view ----------
 
-  splitWith(id: string): void {
-    const a = this.activeId()
-    if (!a || a === id || !this.item(id)) return
-    this.doc.window.split = [a, id]
+  splitWith(id: string, base = this.activeId()): void {
+    if (!base || base === id || !this.item(id)) return
+    this.doc.window.split = [base, id]
     this.ensureView(id)
     this.layout()
     this.changed()
