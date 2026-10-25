@@ -19,6 +19,7 @@ import {
   session as electronSession,
   shell,
   WebContentsView,
+  webContents,
   type Input,
   type Session,
   type WebContents
@@ -67,6 +68,7 @@ import type { Secrets } from './secrets'
 import { agentSystemPrompt, runAgentWithApi, runAgentWithClaudeCode } from './page-agent'
 import { saveClip } from './clips'
 import { Updates } from './updates'
+import { SiteGuard } from './site-guard'
 import { BOOST_WORLD, mediaJs, zapJs, zapStopJs } from './page-tools'
 import { SessionState } from './session-state'
 import { Extensions } from './extensions'
@@ -148,6 +150,8 @@ export class Browser {
   private aiAbort: AbortController | null = null
   ai: AiState = { panelOpen: false, available: null, models: [], hasKey: false, keyStorage: false, claudeCodeAllowed: claudeCodeEngineAllowed(), busy: false, messages: [], tidy: null }
   readonly agent: AgentHost
+  readonly siteGuard = new SiteGuard(app.getPath('userData'))
+  private guardStopped: { wcId: number; url: string } | null = null
 
   restoredAfterCrash = false
   readonly sessionState: SessionState
@@ -165,6 +169,7 @@ export class Browser {
       setTimeout(() => this.restoredAfterCrash && this.showNotice({ text: 'Solamar did not close properly. Your tabs, their history and what you typed are back.' }, 20_000), 1500)
     this.agent = new AgentHost(this, store, secrets)
     this.agent.onChange = () => this.push()
+    void this.siteGuard.init()
     this.ai.hasKey = secrets.has('anthropicKey')
     this.ai.keyStorage = secrets.available
     const w = this.doc.window
@@ -623,7 +628,48 @@ export class Browser {
     return view
   }
 
+  /**
+   * Known phishing and malware pages (site-guard.ts) are stopped before they load, redirects included, and a notice
+   * says why with a way to open the page anyway.
+   */
+  private guard(wc: WebContents): void {
+    const stop = (url: string): boolean => {
+      const hit = this.siteGuard.check(url)
+      if (!hit) return false
+      this.guardStopped = { wcId: wc.id, url }
+      const what = hit.danger === 'phishing' ? 'pages that try to steal passwords and card numbers' : 'sites that spread malware'
+      this.showNotice({ text: `Solamar stopped ${hit.host}: it is on a list of ${what}.`, action: { label: 'Open anyway', call: 'siteGuardOpenAnyway' }, error: true }, 30_000)
+      return true
+    }
+    // Stopping inside the navigation-start event takes the whole app down, so it waits a tick (the request has not
+    // been answered by then). Should a page commit anyway, the tab steps back off it.
+    wc.on('did-start-navigation', (d) => {
+      if (d.isMainFrame && !d.isSameDocument && stop(d.url)) setImmediate(() => !wc.isDestroyed() && wc.stop())
+    })
+    wc.on('did-navigate', (_e, url) => {
+      if (!this.siteGuard.check(url)) return
+      if (wc.navigationHistory.canGoBack()) wc.navigationHistory.goBack()
+      else void wc.loadURL('about:blank').catch(() => {})
+    })
+    wc.on('will-redirect', (d) => {
+      if (d.isMainFrame && stop(d.url)) d.preventDefault()
+    })
+  }
+
+  /** "Open anyway" on the notice: the stopped page, in the tab it was stopped in, for the rest of this run. */
+  siteGuardOpenAnyway(): void {
+    const s = this.guardStopped
+    this.guardStopped = null
+    this.dismissNotice()
+    if (!s) return
+    const wc = webContents.fromId(s.wcId)
+    if (!wc || wc.isDestroyed()) return
+    this.siteGuard.openAnyway(s.url)
+    void wc.loadURL(s.url).catch(() => {})
+  }
+
   private wire(wc: WebContents, id: string): void {
+    this.guard(wc)
     const rt = () => this.runtime[id]
     const nav = () => {
       const r = rt()
@@ -974,6 +1020,7 @@ export class Browser {
       Object.assign(this.peek!, patch)
       this.push()
     }
+    this.guard(wc)
     wc.on('page-title-updated', (_e, title) => update({ title }))
     wc.on('did-navigate', (_e, u) => update({ url: u }))
     wc.on('did-navigate-in-page', (_e, u, main) => main && update({ url: u }))

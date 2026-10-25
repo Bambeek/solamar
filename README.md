@@ -115,17 +115,22 @@ you when a new version is out.
 
 ## Engine and security updates
 
-Solamar 0.1.0 is built on **Electron 45.0.0**, which bundles **Chromium 156.0.8078.48** and Node.js 24.22.0. Pages are
-rendered, sandboxed and isolated by Chromium itself; Solamar adds its own interface around it, not its own engine.
+Solamar is built on **castLabs' Electron 44.9.3**: Electron with Google's Widevine module added, so Netflix, Spotify
+and other DRM video play. It bundles **Chromium 152.0.7977.167** and Node.js 24.22.0. Pages are rendered, sandboxed
+and isolated by Chromium itself; Solamar adds its own interface around it, not its own engine.
 
-- **Security fixes:** Electron ships Chromium's security fixes in patch releases of each supported line. When one comes
-  out, Solamar moves to it and makes a release within a week.
+- **Security fixes:** Electron ships Chromium's security fixes in patch releases of each supported line, and castLabs
+  follows within days. When one comes out, Solamar moves to it and makes a release within a week.
 - **New engine versions:** Electron puts out a new major version, with a newer Chromium, about every eight weeks and
-  supports the latest three. Solamar moves to each new major within a month, so it is always on a supported line.
+  supports the latest three. Solamar moves to each new major within a month of castLabs releasing it, so it is always
+  on a supported line.
+- **Dangerous sites:** Electron leaves out Chrome's Safe Browsing. Solamar stops known phishing and malware pages
+  itself, from lists refreshed every 12 hours; the lists come down to your computer, nothing about what you browse
+  goes up.
 - **Getting them:** the Windows app installs updates itself. The Mac app shows a notice with a download link until it
   is notarized; once it is, it will update itself too.
 
-Dependabot watches Electron and opens a pull request for every new release.
+A daily workflow (`.github/workflows/electron.yml`) checks castLabs' releases and opens a pull request for each new one.
 
 ## Building from source
 

@@ -1,6 +1,6 @@
 import { unlinkSync } from 'node:fs'
 import { isAbsolute, join } from 'node:path'
-import { app, clipboard, ipcMain, Menu, nativeTheme, shell, type IpcMainInvokeEvent } from 'electron'
+import { app, clipboard, components, ipcMain, Menu, nativeTheme, shell, type IpcMainInvokeEvent } from 'electron'
 import { AI_FEATURES, ANTHROPIC_MODELS, APP_ICONS, BOOST_FONTS } from '@shared/defaults'
 import type { AiFeature, Section, Settings, SpaceTheme } from '@shared/types'
 import { isSpaceIcon } from '@shared/icons'
@@ -71,6 +71,23 @@ if (process.platform === 'darwin') {
 }
 
 /**
+ * Netflix, Spotify and other DRM video need Google's Widevine module. Solamar runs on castLabs' Electron, which
+ * fetches and updates it through Chromium's component updater. The first launch downloads it (a few MB); waiting a
+ * little lets pages opened at startup find it, but a slow or missing network must not hold the window back, so after
+ * WIDEVINE_WAIT_MS it finishes in the background and DRM works as soon as it lands.
+ */
+const WIDEVINE_WAIT_MS = 4000
+
+async function widevineReady(): Promise<void> {
+  if (!components) return console.warn('[solamar] not castLabs Electron: no Widevine, DRM video will not play')
+  const ready = components.whenReady().then(
+    () => console.log('[solamar] widevine', JSON.stringify(components.status())),
+    (err: unknown) => console.error('[solamar] widevine', err),
+  )
+  await Promise.race([ready, new Promise((r) => setTimeout(r, WIDEVINE_WAIT_MS))])
+}
+
+/**
  * macOS needs an app menu: without one Command+C, Command+V, Command+Q and the rest do nothing. It holds only the
  * system items; Solamar's own shortcuts (Command+T and so on) are handled in browser.ts like on Windows.
  */
@@ -117,6 +134,7 @@ function start(): void {
 
   app.whenReady().then(async () => {
     Menu.setApplicationMenu(process.platform === 'darwin' ? macMenu() : null)
+    await widevineReady()
     await secrets.init()
     await vault.init()
     browser = new Browser(store, adblock, secrets, vault)
@@ -349,6 +367,7 @@ function registerIpc(b: Browser, store: Store, adblock: AdBlock): void {
       b.dismissNotice()
       b.openTab(RELEASES_URL)
     },
+    siteGuardOpenAnyway: () => b.siteGuardOpenAnyway(),
     openClipFolder: (path) => b.openClipFolder(str(path, 1000)),
     chooseClipsDir: () => b.chooseClipsDir(),
     resetClipsDir: () => {
