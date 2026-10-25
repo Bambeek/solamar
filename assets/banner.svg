@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="300" viewBox="0 0 680 300" role="img" aria-labelledby="t d">
+<title id="t">Solamar</title>
+<desc id="d">Solamar, the open-source browser after Arc: spaces, ad blocking and an AI agent built in, Arc import, Claude Code. An isometric browser window with three space pills and titled tabs; space tiles fly into it from an open moving box marked ARC, and the AI agent's glowing sparkle and cursor hover over a tab of its own.</desc>
+<style>
+svg{--bg0:#FFFFFF;--bg1:#F3F4F9;--line:#E2E5EE;--grid:#D9DDE8;--ink:#0E1121;--t2:#3F465C;--t3:#5C6379;--acc:#5546E8;--acch:#7C6FFF;--accl:#3B2DC2;--accp:#ECEAFF;--accg:#8F84FF;--sht:#FFFFFF;--shl:#DCE0EA;--shr:#C2C8D7;--she:#B3BACB;--plt:#ECEEF5;--scr:#F6F7FB;--img:#1B2146;--imgw:#2A3466;--mtt:#D3D8E4;--mts:#9098AE;--mtd:#5D6580;--dt:#F4F2FF;--krt:#EBD6B0;--krl:#D9BE8F;--krr:#C4A673;--kre:#A88A58;--kri:#8C7044;--shadow:#1B2140}
+@media (prefers-color-scheme:dark){svg{--bg0:#151A2A;--bg1:#0F1320;--line:#252C3F;--grid:#222940;--ink:#F2F4FA;--t2:#BCC2D3;--t3:#959CB2;--acc:#A398FF;--acch:#8F82FF;--accl:#6A5CF5;--accp:#24224A;--accg:#7B6CFF;--sht:#3A4364;--shl:#2A3150;--shr:#1F253D;--she:#56608C;--plt:#2E3655;--scr:#232A45;--img:#0B0E1B;--imgw:#1B2240;--mtt:#6C7598;--mts:#454D6E;--mtd:#2E3452;--dt:#E4E0FF;--krt:#7A6650;--krl:#635241;--krr:#4E4134;--kre:#8C765C;--kri:#3A3027;--shadow:#000000}}
+.sans{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.ink{fill:var(--ink)}.t2{fill:var(--t2)}.t3{fill:var(--t3)}.acc{fill:var(--acc)}
+.card{fill:url(#bg);stroke:var(--line)}
+.grid{stroke:var(--grid);fill:none}
+.sht{fill:var(--sht)}.shl{fill:var(--shl)}.shr{fill:var(--shr)}.she{fill:none;stroke:var(--she)}.plt{fill:var(--plt)}.scr{fill:var(--scr)}
+.img{fill:var(--img)}.imgw{fill:none;stroke:var(--imgw);stroke-linecap:round}
+.aT{fill:var(--acch)}.aL{fill:var(--acc)}.aR{fill:var(--accl)}.aP{fill:var(--accp)}
+.tra{fill:none;stroke:var(--acch);stroke-linecap:round;stroke-linejoin:round}
+.mtt{fill:var(--mtt)}.mts{fill:var(--mts)}.mtd{fill:var(--mtd)}.dT{fill:var(--dt)}
+.krt{fill:var(--krt)}.krl{fill:var(--krl)}.krr{fill:var(--krr)}.kri{fill:var(--kri)}.kre{fill:none;stroke:var(--kre)}
+.mtdS{stroke:var(--mtd)}.sheS{stroke:var(--she)}
+.shadow{fill:var(--shadow)}
+.s0{stop-color:var(--bg0)}.s1{stop-color:var(--bg1)}.sa{stop-color:var(--accg)}.sah{stop-color:var(--acch)}
+</style>
+<defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="s0"/><stop offset="1" class="s1"/></linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="drop" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur in="SourceAlpha" stdDeviation="2.4"/><feOffset dy="3"/><feComponentTransfer><feFuncA type="linear" slope=".22"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <radialGradient id="halo" cx="520" cy="150" r="185" gradientUnits="userSpaceOnUse"><stop offset="0" class="sa" stop-opacity=".16"/><stop offset="1" class="sa" stop-opacity="0"/></radialGradient>
+    <radialGradient id="fadeG" cx="520" cy="200" r="210" gradientUnits="userSpaceOnUse" gradientTransform="translate(520 200) scale(1 .6) translate(-520 -200)"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".6" stop-color="#fff" stop-opacity=".3"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <mask id="fade"><rect width="680" height="300" fill="url(#fadeG)"/></mask>
+    <linearGradient id="beam" x1="0" y1="1" x2="0" y2="0"><stop offset="0" class="sah" stop-opacity=".45"/><stop offset="1" class="sah" stop-opacity="0"/></linearGradient>
+    </defs>
+<rect class="card" x=".5" y=".5" width="679" height="299" rx="16"/>
+<rect x="300" y="1" width="379" height="298" fill="url(#halo)"/>
+<path class="grid" stroke-width=".8" mask="url(#fade)" d="M508 52L258.6 196M523.6 61L274.2 205M539.2 70L289.8 214M554.8 79L305.4 223M570.4 88L320.9 232M585.9 97L336.5 241M601.5 106L352.1 250M617.1 115L367.7 259M632.7 124L383.3 268M648.3 133L398.9 277M663.9 142L414.5 286M679.5 151L430.1 295M695.1 160L445.6 304M710.6 169L461.2 313M726.2 178L476.8 322M741.8 187L492.4 331M757.4 196L508 340M508 52L757.4 196M492.4 61L741.8 205M476.8 70L726.2 214M461.2 79L710.6 223M445.6 88L695.1 232M430.1 97L679.5 241M414.5 106L663.9 250M398.9 115L648.3 259M383.3 124L632.7 268M367.7 133L617.1 277M352.1 142L601.5 286M336.5 151L585.9 295M320.9 160L570.4 304M305.4 169L554.8 313M289.8 178L539.2 322M274.2 187L523.6 331M258.6 196L508 340"/>
+<path class="shadow" opacity=".18" filter="url(#soft)" transform="translate(0 6)" d="M503.8 124.5L625.1 194.5L540.2 243.5L418.9 173.5Z"/>
+<path class="shl" d="M418.9 173.5L540.2 243.5L540.2 233.7L418.9 163.7Z"/>
+<path class="shr" d="M625.1 194.5L540.2 243.5L540.2 233.7L625.1 184.7Z"/>
+<path class="sht" d="M503.8 114.7L625.1 184.7L540.2 233.7L418.9 163.7Z"/>
+<g transform="matrix(12.124 7 -12.124 7 503.813 114.7)"><rect class="scr" x=".25" y=".25" width="9.5" height="6.5" rx=".35"/><rect class="plt" x=".5" y=".5" width="9" height=".85" rx=".3"/><rect class="aT" x=".75" y=".68" width="1.35" height=".5" rx=".25"/><rect class="mts" x="2.3" y=".68" width="1.1" height=".5" rx=".25"/><rect class="mts" x="3.6" y=".68" width="1.1" height=".5" rx=".25"/><rect class="shl" x="5.1" y=".68" width="4.1" height=".5" rx=".25"/><rect class="sht" x=".5" y="1.55" width="2.1" height=".55" rx=".18"/><rect class="aP" x="2.8" y="1.55" width="2.5" height=".55" rx=".18"/><rect class="tra" x="2.8" y="1.55" width="2.5" height=".55" rx=".18" stroke-width="1.4" vector-effect="non-scaling-stroke"/><rect class="shl" x="5.5" y="1.55" width="2.1" height=".55" rx=".18"/><rect class="img" x=".5" y="2.35" width="5.6" height="4.1" rx=".25"/><circle class="aT" cx="3.3" cy="3.75" r=".72" filter="url(#glow)"/><path class="imgw" stroke-width="1.6" vector-effect="non-scaling-stroke" d="M1.2 4.75Q1.9 4.4 2.6 4.75T4 4.75T5.4 4.75M1.6 5.45Q2.3 5.1 3 5.45T4.4 5.45T5.4 5.45"/><rect class="shl" x="6.4" y="2.4" width="2.9" height=".42" rx=".2"/><rect class="mtt" x="6.4" y="3.1" width="2.4" height=".3" rx=".15"/><rect class="mtt" x="6.4" y="3.6" width="2.7" height=".3" rx=".15"/><rect class="mtt" x="6.4" y="4.1" width="2.0" height=".3" rx=".15"/><rect class="aL" x="6.4" y="5.5" width="1.8" height=".6" rx=".3"/></g>
+<path class="she" stroke-width=".8" d="M418.9 163.7L540.2 233.7L625.1 184.7M540.2 243.5L540.2 233.7"/>
+<path class="shadow" opacity=".2" filter="url(#soft)" transform="translate(0 6)" d="M398 231L434.4 252L398 273L361.6 252Z"/>
+<path class="krr" d="M398 198.8L361.6 219.8L348.3 198.1L384.7 177.1Z"/>
+<path class="krl" d="M398 198.8L434.4 219.8L447.7 198.1L411.3 177.1Z"/>
+<path class="kri" d="M398 198.8L361.6 219.8L361.6 240.7L398 219.7Z"/>
+<path class="kri" opacity=".8" d="M398 198.8L434.4 219.8L434.4 240.7L398 219.7Z"/>
+<path class="kri" opacity=".6" d="M398 219.7L434.4 240.7L398 261.7L361.6 240.7Z"/>
+<path class="krl" d="M361.6 252L398 273L398 240.8L361.6 219.8Z"/>
+<path class="krr" d="M434.4 252L398 273L398 240.8L434.4 219.8Z"/>
+<path class="krt" d="M361.6 219.8L398 240.8L391.3 258.7L355 237.7Z"/>
+<path class="krr" d="M434.4 219.8L398 240.8L404.7 258.7L441 237.7Z"/>
+<path class="kre" stroke-width=".9" stroke-linejoin="round" d="M398 198.8L434.4 219.8L398 240.8L361.6 219.8Z"/>
+<g transform="matrix(12.124 7 0 14 361.627 219.8)"><rect class="kri" opacity=".55" x=".6" y=".55" width="1.8" height=".62" rx=".12"/><text class="mono dT" x="1.5" y="1.02" font-size=".46" font-weight="700" letter-spacing=".08" text-anchor="middle">ARC</text></g>
+<path class="tra" stroke-width="1.4" opacity=".55" stroke-dasharray="2 3" d="M404 220C410 186 430 156 484 134"/>
+<g filter="url(#drop)"><path class="aR" d="M396.7 198.1L417.3 210L417.3 206.9L396.7 195Z"/><path class="aR" d="M431.3 201.9L417.3 210L417.3 206.9L431.3 198.8Z"/><path class="aL" d="M410.7 186.9L431.3 198.8L417.3 206.9L396.7 195Z"/></g>
+<g filter="url(#drop)"><path class="aR" d="M416.7 166.1L437.3 178L437.3 174.9L416.7 163Z"/><path class="aR" d="M451.3 169.9L437.3 178L437.3 174.9L451.3 166.8Z"/><path class="aL" d="M430.7 154.9L451.3 166.8L437.3 174.9L416.7 163Z"/></g>
+<g filter="url(#drop)"><path class="aR" d="M444.7 142.1L465.3 154L465.3 150.9L444.7 139Z"/><path class="aR" d="M479.3 145.9L465.3 154L465.3 150.9L479.3 142.8Z"/><path class="aT" d="M458.7 130.9L479.3 142.8L465.3 150.9L444.7 139Z"/></g>
+<path d="M524.3 153.5V119.5H538.3V153.5Z" style="fill:url(#beam)"/>
+<path class="tra" stroke-width="1.2" opacity=".6" stroke-dasharray="2 3" d="M531.3 123.5V152.5"/>
+<g transform="translate(531.3 111.5)" filter="url(#glow)"><path class="aT" d="M0 -11C1.2 -3 3 -1.2 11 0C3 1.2 1.2 3 0 11C-1.2 3 -3 1.2 -11 0C-3 -1.2 -1.2 -3 0 -11Z"/><path class="dT" transform="scale(.42)" d="M0 -11C1.2 -3 3 -1.2 11 0C3 1.2 1.2 3 0 11C-1.2 3 -3 1.2 -11 0C-3 -1.2 -1.2 -3 0 -11Z"/></g>
+<g transform="translate(543.3 115.5)" filter="url(#drop)"><path class="dT" d="M0 0L0 15.5L4.2 11.8L7 18L9.6 16.8L6.9 10.8L12.3 10.6Z"/><path class="mtdS" fill="none" stroke-width="1.2" stroke-linejoin="round" d="M0 0L0 15.5L4.2 11.8L7 18L9.6 16.8L6.9 10.8L12.3 10.6Z"/></g>
+<g class="sans">
+    <rect class="aT" x="40" y="56" width="6" height="6" rx="1.5"/>
+    <text class="acc mono" x="54" y="62.5" font-size="10.5" font-weight="600" letter-spacing="1.6">OPEN-SOURCE BROWSER</text>
+    <text class="ink" x="38" y="114" font-size="50" font-weight="750" letter-spacing="-1.5">Solamar</text>
+    <text class="t2" x="40" y="146" font-size="16.5" font-weight="500">The browser after Arc.</text>
+    <text class="t3" x="40" y="168" font-size="14">Spaces, ad blocking and AI, built in.</text>
+    <rect x="40" y="190" width="288" height="30" rx="8" class="aP"/>
+    <text class="mono" x="184" y="209.5" font-size="12.5" font-weight="500" text-anchor="middle"><tspan class="ink">Arc import</tspan><tspan class="acc"> · </tspan><tspan class="ink">AI agent</tspan><tspan class="acc"> · </tspan><tspan class="ink">Claude Code</tspan></text>
+    <text class="t3 mono" x="40" y="246" font-size="10" font-weight="600" letter-spacing="1.2">WINDOWS<tspan class="acc"> · </tspan>MACOS<tspan class="acc"> · </tspan>GPL-3.0<tspan class="acc"> · </tspan>NO TELEMETRY</text>
+    </g>
+</svg>
