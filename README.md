@@ -113,6 +113,20 @@ The installers are not code-signed yet:
 The Windows app updates itself from [GitHub Releases](https://github.com/Bambeek/solamar/releases). The Mac app tells
 you when a new version is out.
 
+## Engine and security updates
+
+Solamar 0.1.0 is built on **Electron 45.0.0**, which bundles **Chromium 156.0.8078.48** and Node.js 24.22.0. Pages are
+rendered, sandboxed and isolated by Chromium itself; Solamar adds its own interface around it, not its own engine.
+
+- **Security fixes:** Electron ships Chromium's security fixes in patch releases of each supported line. When one comes
+  out, Solamar moves to it and makes a release within a week.
+- **New engine versions:** Electron puts out a new major version, with a newer Chromium, about every eight weeks and
+  supports the latest three. Solamar moves to each new major within a month, so it is always on a supported line.
+- **Getting them:** the Windows app installs updates itself. The Mac app shows a notice with a download link until it
+  is notarized; once it is, it will update itself too.
+
+Dependabot watches Electron and opens a pull request for every new release.
+
 ## Building from source
 
 Solamar is built with Electron, React and TypeScript.
