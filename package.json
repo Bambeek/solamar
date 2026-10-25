@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "dist": "node scripts/dist.mjs",
-    "dist:personal": "node scripts/dist.mjs --personal"
+    "dist:personal": "node scripts/dist.mjs --personal",
+    "postinstall": "node node_modules/electron/install.js"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
@@ -22,7 +23,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
-    "electron": "^45.0.0",
+    "electron": "https://github.com/castlabs/electron-releases#v44.9.3+wvcus",
     "electron-builder": "^26.18.0",
     "electron-vite": "^6.0.0",
     "playwright": "^1.64.1",

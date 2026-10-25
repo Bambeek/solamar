@@ -2,6 +2,8 @@
 # the Windows installer, then smoke-tests each packaged app. Run it from the Actions tab (files land as workflow
 # artifacts), or push a v* tag matching package.json's version: then both jobs upload to that version's draft GitHub
 # release (installers, blockmaps, latest.yml and latest-mac.yml for the updater). Publishing the draft releases it.
+# Repository secrets EVS_ACCOUNT_NAME and EVS_PASSWD (castLabs EVS) give the builds the production Widevine signature
+# that Netflix and other DRM services need (scripts/vmp.cjs); without them the builds still work, DRM on test servers.
 name: Build
 
 on:
@@ -45,14 +47,23 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install castlabs-evs
       - run: npm ci
       - run: npm run typecheck
       - run: npx vitest run
       - run: node scripts/dist.mjs ${{ inputs.personal && '--personal' || '' }} ${{ startsWith(github.ref, 'refs/tags/v') && '--publish' || '' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVS_ACCOUNT_NAME: ${{ secrets.EVS_ACCOUNT_NAME }}
+          EVS_PASSWD: ${{ secrets.EVS_PASSWD }}
+          EVS_PYTHON: python
       - name: Packaged app loads a page
         run: node tests/e2e/packaged.mjs "$RUNNER_TEMP/profile-packaged"
+      - name: DRM video plays
+        run: node tests/e2e/widevine.mjs "$RUNNER_TEMP/profile-widevine" dist/mac-arm64/Solamar.app/Contents/MacOS/Solamar
       - name: macOS checks and a screenshot
         run: node tests/e2e/mac.mjs "$RUNNER_TEMP/profile-mac" "$RUNNER_TEMP/solamar-mac.png"
       - uses: actions/upload-artifact@v4
@@ -75,12 +86,20 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install castlabs-evs
       - run: npm ci
       - run: node scripts/dist.mjs ${{ inputs.personal && '--personal' || '' }} ${{ startsWith(github.ref, 'refs/tags/v') && '--publish' || '' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVS_ACCOUNT_NAME: ${{ secrets.EVS_ACCOUNT_NAME }}
+          EVS_PASSWD: ${{ secrets.EVS_PASSWD }}
       - name: Packaged app loads a page
         run: node tests/e2e/packaged.mjs "$env:RUNNER_TEMP/profile-packaged"
+      - name: DRM video plays
+        run: node tests/e2e/widevine.mjs "$env:RUNNER_TEMP/profile-widevine" dist/win-unpacked/Solamar.exe
       - uses: actions/upload-artifact@v4
         with:
           name: solamar-windows

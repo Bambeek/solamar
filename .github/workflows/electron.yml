@@ -1,0 +1,58 @@
+# Keeps Solamar on a patched engine. Solamar runs on castLabs' Electron (Electron plus Google's Widevine, for DRM
+# video), which Dependabot cannot follow, so this checks castLabs' releases every day (scripts/electron-latest.mjs).
+# A newer patch release of the major Solamar is on, and a new stable major, each get a pull request that moves
+# package.json and the lockfile to it. Merging it and tagging a release ships it (README, "Engine and security
+# updates"). Needs Settings > Actions > General > "Allow GitHub Actions to create and approve pull requests"; without
+# it the update is filed as an issue instead.
+name: Electron updates
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - id: check
+        run: node scripts/electron-latest.mjs | tee -a "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull requests for the new releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CURRENT: ${{ steps.check.outputs.current }}
+          PATCH: ${{ steps.check.outputs.patch }}
+          MAJOR: ${{ steps.check.outputs.major }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for kind in patch major; do
+            version=$([ "$kind" = patch ] && echo "$PATCH" || echo "$MAJOR")
+            [ -n "$version" ] || continue
+            branch="electron-${version%+wvcus}"
+            if git ls-remote --exit-code --heads origin "$branch" > /dev/null; then echo "$branch is already proposed"; continue; fi
+            git checkout -q -B "$branch" origin/main
+            node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8'));p.devDependencies.electron='https://github.com/castlabs/electron-releases#v'+process.argv[1];fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')" "$version"
+            npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+            git commit -qam "Electron ${version%+wvcus} (castLabs, with Widevine)"
+            git push -q origin "$branch"
+            title="Electron ${version%+wvcus} (castLabs)"
+            if [ "$kind" = patch ]; then
+              body="castLabs released Electron $version, a patch release of the line Solamar is on ($CURRENT). Patch releases carry Chromium's security fixes: merge, then tag a release within a week. Release notes: https://github.com/castlabs/electron-releases/releases/tag/v$version"
+            else
+              body="castLabs released Electron $version, a new major (Solamar is on $CURRENT). Run the e2e tests on it before merging; move within a month. Release notes: https://github.com/castlabs/electron-releases/releases/tag/v$version"
+            fi
+            gh pr create --base main --head "$branch" --title "$title" --body "$body" ||
+              gh issue create --title "$title" --body "$body (branch $branch is ready; Actions may not open pull requests in this repository)"
+          done

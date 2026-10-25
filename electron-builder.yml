@@ -9,6 +9,12 @@ publish:
   owner: Bambeek
   repo: solamar
   releaseType: draft
+# castLabs' Electron (Electron plus Google's Widevine, for DRM video): its zips come from castLabs' releases, and the
+# Widevine VMP signature goes on around code signing (scripts/vmp.cjs; CI secrets EVS_ACCOUNT_NAME, EVS_PASSWD).
+electronDownload:
+  mirror: https://github.com/castlabs/electron-releases/releases/download/
+afterPack: scripts/vmp-after-pack.cjs
+afterSign: scripts/vmp-after-sign.cjs
 appId: app.solamar.browser
 productName: Solamar
 copyright: Copyright © 2026 Bambeek
