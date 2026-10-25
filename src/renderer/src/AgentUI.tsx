@@ -374,6 +374,8 @@ export function DrivingPill({ s }: { s: AppState }) {
   const last = ag.log[ag.log.length - 1]
   // The same tools serve Claude Code and Solamar's own page agent; steps since the agent's run started are its own.
   const who = s.pageAgent && last && last.at >= s.pageAgent.since ? 'Agent' : 'Claude Code'
+  // Solamar's own agent is done once its run ends; the pill would otherwise linger for the 20 s Claude Code gets.
+  if (who === 'Agent' && !s.pageAgent?.running) return null
   return (
     <div className={'driving' + (ag.paused ? ' paused' : '')} role="status">
       <SquareTerminal size={14} aria-hidden />
