@@ -4,7 +4,7 @@ import { Check, Copy, Globe, Languages, MessageSquareReply, Minimize2, PenLine, 
 import type { AppState } from '@shared/types'
 import { hostOf } from '@shared/util'
 import { call } from './api'
-import { IS_MAC, keyLabel } from './keys'
+import { composing, IS_MAC, keyLabel } from './keys'
 
 const ACTIONS: { id: string; label: string; Icon: typeof Sparkles }[] = [
   { id: 'fix', label: 'Fix mistakes', Icon: SpellCheck },
@@ -93,7 +93,7 @@ export function WriteView({ s }: { s: AppState }) {
                 value={w.busy ? w.result : draft}
                 readOnly={w.busy}
                 onChange={(e) => setDraft(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && (IS_MAC ? e.metaKey : e.ctrlKey) && (e.preventDefault(), apply())}
+                onKeyDown={(e) => e.key === 'Enter' && !composing(e) && (IS_MAC ? e.metaKey : e.ctrlKey) && (e.preventDefault(), apply())}
                 aria-label="Suggested text"
                 placeholder={w.busy ? 'Writing…' : ''}
               />

@@ -33,6 +33,7 @@ import iconViolet from './assets/app-icons/violet.svg'
 import artPuzzle from './assets/settings/puzzle.webp'
 import artShield from './assets/settings/shield.webp'
 import artVault from './assets/settings/vault.webp'
+import { composing } from './keys'
 
 export function Overlay() {
   const s = useAppState()
@@ -245,6 +246,7 @@ function CommandBar({ s }: { s: AppState }) {
           aria-label={renaming ? 'New name' : 'Search or address'}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
+            if (composing(e)) return
             if (e.key === 'ArrowDown') (e.preventDefault(), setSel((i) => Math.min(rows.length - 1, i + 1)))
             else if (e.key === 'ArrowUp') (e.preventDefault(), setSel((i) => Math.max(0, i - 1)))
             else if (e.key === 'Tab' && better?.for === text) (e.preventDefault(), setText(better.query))
@@ -367,7 +369,7 @@ function ThemeEditor({ s, isNew }: { s: AppState; isNew?: boolean }) {
       )}
       <label className="field">
         <span>Name</span>
-        <input className="input" autoFocus value={title} maxLength={40} placeholder="Work, Fun, Research…" onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && save()} />
+        <input className="input" autoFocus value={title} maxLength={40} placeholder="Work, Fun, Research…" onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && !composing(e) && save()} />
       </label>
       <div className="field">
         <span>Icon</span>

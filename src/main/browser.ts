@@ -2093,6 +2093,8 @@ export class Browser {
 
   private onKey(e: Electron.Event, input: Input): void {
     if (input.type !== 'keyDown' || this.shortcutsSuspended) return
+    // The input method has this key (Enter or Esc while a Korean, Japanese or Chinese character is being composed).
+    if (input.isComposing || input.key === 'Process') return
     const acc = MAC ? macShortcut(accelerator(input)) : accelerator(input)
     if (!acc) return
     if (acc === 'Esc' && this.overlayState && this.overlayState.kind !== 'notice') {
