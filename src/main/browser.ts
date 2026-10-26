@@ -55,7 +55,7 @@ import type {
   TabRuntime,
   WriteState
 } from '@shared/types'
-import { accelerator, boostCss, boostMatches, firefoxUserAgent, frameColors, GOOGLE_SIGN_IN_HOSTS, hostOf, isEmptyBoost, normalizeAccelerator, siteOf, toNavigable, uid } from '@shared/util'
+import { accelerator, boostCss, boostMatches, clientHintsOf, firefoxUserAgent, frameColors, GOOGLE_SIGN_IN_HOSTS, hostOf, isEmptyBoost, normalizeAccelerator, sendsClientHints, siteOf, toNavigable, uid } from '@shared/util'
 import { AdBlock } from './adblock'
 import { PAGE_TEXT_LIMIT, askPrompt, parseTidy, splitHandoff, summarizePrompt, tidyPrompt, type ChatMessage } from './ai'
 import { AgentHost } from './agent'
@@ -152,6 +152,8 @@ export class Browser {
   readonly agent: AgentHost
   readonly siteGuard = new SiteGuard(app.getPath('userData'))
   private guardStopped: { wcId: number; url: string } | null = null
+  /** The client hints Chromium sends with subresources, added to page loads (see setupSession). */
+  private clientHints: Record<string, string> | null = null
 
   restoredAfterCrash = false
   readonly sessionState: SessionState
@@ -222,6 +224,17 @@ export class Browser {
       wc.on('will-navigate', (e) => e.preventDefault())
     }
     this.ui.webContents.loadURL(rendererUrl('ui')).catch(() => {})
+    // Known before the first page loads, from the same source Chromium uses for every other request.
+    this.ui.webContents.once('did-finish-load', () => {
+      const read = 'navigator.userAgentData ? { brands: navigator.userAgentData.brands, mobile: navigator.userAgentData.mobile, platform: navigator.userAgentData.platform } : null'
+      this.ui.webContents
+        .executeJavaScript(read)
+        .then((d: { brands: { brand: string; version: string }[]; mobile: boolean; platform: string } | null) => {
+          if (!d || this.clientHints) return
+          this.clientHints = { 'sec-ch-ua': d.brands.map((b) => `"${b.brand}";v="${b.version}"`).join(', '), 'sec-ch-ua-mobile': d.mobile ? '?1' : '?0', 'sec-ch-ua-platform': `"${d.platform}"` }
+        })
+        .catch(() => {})
+    })
     this.overlay.webContents.loadURL(rendererUrl('overlay')).catch(() => {})
 
     this.win.on('resize', () => {
@@ -527,13 +540,26 @@ export class Browser {
     if (this.sessions.has(ses)) return
     this.sessions.add(ses)
     ses.setUserAgent(app.userAgentFallback) // plain Chrome UA (set in index.ts), also for partitions
-    // Google's sign-in pages get Firefox's user agent and no Chrome client hints (see firefoxUserAgent); the page
-    // preload makes navigator agree, since Google compares the two.
+    // One listener for the session (Electron keeps only the last one). Google's sign-in pages get Firefox's user
+    // agent and no Chrome client hints (see firefoxUserAgent); the page preload makes navigator agree, since Google
+    // compares the two. Every other page load gets the client hints Chromium already sends with that page's scripts
+    // and fetches: Electron leaves them off navigations only, and a site that ties its login session to the browser's
+    // headers then sees two different browsers and ends the session (EU Login signed people out right away).
     const firefox = firefoxUserAgent(process.platform)
-    ses.webRequest.onBeforeSendHeaders({ urls: GOOGLE_SIGN_IN_HOSTS.map((h) => `https://${h}/*`) }, (details, callback) => {
-      const headers: Record<string, string> = { ...details.requestHeaders, 'User-Agent': firefox }
-      for (const k of Object.keys(headers)) if (/^sec-ch-ua/i.test(k)) delete headers[k]
-      callback({ requestHeaders: headers })
+    ses.webRequest.onBeforeSendHeaders((details, callback) => {
+      if (details.url.startsWith('https://') && GOOGLE_SIGN_IN_HOSTS.includes(new URL(details.url).hostname)) {
+        const headers: Record<string, string> = { ...details.requestHeaders, 'User-Agent': firefox }
+        for (const k of Object.keys(headers)) if (/^sec-ch-ua/i.test(k)) delete headers[k]
+        return callback({ requestHeaders: headers })
+      }
+      const hints = clientHintsOf(details.requestHeaders)
+      if (hints) {
+        this.clientHints ??= hints
+        return callback({})
+      }
+      const navigation = details.resourceType === 'mainFrame' || details.resourceType === 'subFrame'
+      if (navigation && this.clientHints && sendsClientHints(details.url)) return callback({ requestHeaders: { ...details.requestHeaders, ...this.clientHints } })
+      callback({})
     })
     this.adblock.attach(ses)
     ses.registerPreloadScript({ type: 'frame', id: 'solamar-page', filePath: join(__dirname, '../preload/page.js') })

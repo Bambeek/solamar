@@ -203,3 +203,23 @@ export function firefoxUserAgent(platform: string): string {
   const os = /win/i.test(platform) ? 'Windows NT 10.0; Win64; x64' : /mac|darwin/i.test(platform) ? 'Macintosh; Intel Mac OS X 10.15' : 'X11; Linux x86_64'
   return `Mozilla/5.0 (${os}; rv:140.0) Gecko/20100101 Firefox/140.0`
 }
+
+/** The low-entropy client hints Chromium sends by default. */
+export const CLIENT_HINT_HEADERS = ['sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform']
+
+/** Those headers out of a request that carries them (any case), or null when it has none. */
+export function clientHintsOf(headers: Record<string, string>): Record<string, string> | null {
+  const out: Record<string, string> = {}
+  for (const [k, v] of Object.entries(headers)) if (CLIENT_HINT_HEADERS.includes(k.toLowerCase())) out[k.toLowerCase()] = v
+  return out['sec-ch-ua'] ? out : null
+}
+
+/** Chromium sends client hints only to potentially trustworthy origins: https, and http on the local machine. */
+export function sendsClientHints(url: string): boolean {
+  try {
+    const u = new URL(url)
+    return u.protocol === 'https:' || (u.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(u.hostname))
+  } catch {
+    return false
+  }
+}
