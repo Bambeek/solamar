@@ -1,4 +1,4 @@
-// The updater in the packaged app (dist/win-unpacked, built with `npm run dist`): a local feed claims version 0.1.1
+// The updater in the packaged app (dist/win-unpacked, built with `npm run dist`): a local feed claims the next version
 // and serves the freshly built installer under it, the way a GitHub release would. The app must find it, download it,
 // check its sha512 and say it is ready, with a "Restart now" notice. Nothing is installed.
 // Usage: node tests/e2e/updates.mjs <userDataDir>
@@ -9,11 +9,13 @@ import { join } from 'node:path'
 import { _electron as electron } from 'playwright'
 
 const [userData] = process.argv.slice(2)
+const current = JSON.parse(readFileSync('package.json', 'utf8')).version
+const next = current.replace(/\d+$/, (n) => Number(n) + 1)
 const installer = 'dist/Solamar-Setup.exe'
 if (!existsSync(installer)) throw new Error('Build first: npm run dist')
 const sha512 = createHash('sha512').update(readFileSync(installer)).digest('base64')
 const size = statSync(installer).size
-const feed = `version: 0.1.1
+const feed = `version: ${next}
 files:
   - url: Solamar-Setup.exe
     sha512: ${sha512}
@@ -49,20 +51,20 @@ await ui.waitForLoadState('domcontentloaded')
 const call = (m, ...a) => ui.evaluate(([m, a]) => window.solamar.call(m, ...a), [m, a])
 await call('updateSettings', { onboarded: true })
 let s = await call('state')
-check('the packaged app has the updater on', s.update?.status !== 'off' && s.update?.version === '0.1.0', JSON.stringify(s.update))
+check('the packaged app has the updater on', s.update?.status !== 'off' && s.update?.version === current, JSON.stringify(s.update))
 await call('updateCheck')
 for (let i = 0; i < 240; i++) {
   s = await call('state')
   if (s.update?.status === 'ready' || s.update?.status === 'error') break
   await sleep(250)
 }
-check('it finds 0.1.1, downloads it and checks it', s.update?.status === 'ready' && s.update.next === '0.1.1', JSON.stringify(s.update))
+check('it finds the next version, downloads it and checks it', s.update?.status === 'ready' && s.update.next === next, JSON.stringify(s.update))
 check('it asked the feed, then fetched the installer', asked.some((u) => u.startsWith('/latest.yml')) && asked.some((u) => u === '/Solamar-Setup.exe'), asked.join(' '))
-check('a notice offers to restart now', s.notice?.text.includes('0.1.1') && s.notice?.action?.call === 'updateInstall', JSON.stringify(s.notice))
+check('a notice offers to restart now', s.notice?.text.includes(next) && s.notice?.action?.call === 'updateInstall', JSON.stringify(s.notice))
 await call('openOverlay', 'settings', { tab: 'about' })
 const ov = app.windows().find((w) => w.url().endsWith('#overlay'))
 await sleep(500)
-check('Settings > About says it is ready, with a button', /0\.1\.1 is downloaded/.test(await ov.locator('.set-update').innerText()) && (await ov.locator('.set-update button', { hasText: 'Restart and update' }).count()) === 1)
+check('Settings > About says it is ready, with a button', (await ov.locator('.set-update').innerText()).includes(`${next} is downloaded`) && (await ov.locator('.set-update button', { hasText: 'Restart and update' }).count()) === 1)
 
 await app.close()
 server.close()

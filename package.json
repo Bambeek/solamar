@@ -1,7 +1,7 @@
 {
   "name": "solamar",
   "productName": "Solamar",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A local-first sidebar browser for people leaving Arc.",
   "main": "./out/main/index.js",
   "license": "GPL-3.0-or-later",

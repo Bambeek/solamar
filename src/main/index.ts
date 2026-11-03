@@ -368,6 +368,8 @@ function registerIpc(b: Browser, store: Store, adblock: AdBlock): void {
       b.openTab(RELEASES_URL)
     },
     siteGuardOpenAnyway: () => b.siteGuardOpenAnyway(),
+    findQuery: (text, back, next) => b.findQuery(str(text, 1000), back === true, next === true),
+    closeFind: () => b.closeFind(),
     openClipFolder: (path) => b.openClipFolder(str(path, 1000)),
     chooseClipsDir: () => b.chooseClipsDir(),
     resetClipsDir: () => {

@@ -115,8 +115,8 @@ you when a new version is out.
 
 ## Engine and security updates
 
-Solamar is built on **castLabs' Electron 44.9.3**: Electron with Google's Widevine module added, so Netflix, Spotify
-and other DRM video play. It bundles **Chromium 152.0.7977.167** and Node.js 24.22.0. Pages are rendered, sandboxed
+Solamar is built on **castLabs' Electron 44.9.3**: Electron with Google's Widevine module added, for DRM video. Services
+that demand a production signature, like Netflix, do not play in released builds yet. It bundles **Chromium 152.0.7977.167** and Node.js 24.22.0. Pages are rendered, sandboxed
 and isolated by Chromium itself; Solamar adds its own interface around it, not its own engine.
 
 - **Security fixes:** Electron ships Chromium's security fixes in patch releases of each supported line, and castLabs

@@ -111,6 +111,7 @@ export type CommandId =
   | 'zoomOut'
   | 'zoomReset'
   | 'devtools'
+  | 'find'
 
 export type EngineId = 'ollama' | 'anthropic' | 'claude-code'
 export type AiFeature = 'summarize' | 'ask' | 'tidy' | 'write' | 'search' | 'agent'
@@ -320,7 +321,16 @@ export interface BoostEditorState {
   zapping: boolean
 }
 
-export type OverlayKind = 'command' | 'settings' | 'theme' | 'import' | 'archive' | 'space-new' | 'confirm' | 'resize' | 'permission' | 'write' | 'downloads' | 'history' | 'peek' | 'import-browser' | 'save-password' | 'extension-install' | 'notice' | 'vault-unlock'
+export type OverlayKind = 'command' | 'settings' | 'theme' | 'import' | 'archive' | 'space-new' | 'confirm' | 'resize' | 'permission' | 'write' | 'downloads' | 'history' | 'peek' | 'import-browser' | 'save-password' | 'extension-install' | 'notice' | 'vault-unlock' | 'find'
+
+/** Find in page (Ctrl+F): what is searched for and where the search stands. */
+export interface FindState {
+  text: string
+  active: number // which match is selected, from 1
+  matches: number
+  done: boolean // the page has answered for this text, so 0 matches really means none
+  tick: number // goes up when Ctrl+F is pressed again: the bar takes the keyboard back
+}
 
 export interface OverlayState {
   kind: OverlayKind
@@ -450,6 +460,7 @@ export interface AppState {
   savePassword: SavePasswordPrompt | null
   pageAgent: PageAgentState | null
   notice: Notice | null // a short message at the bottom of the window
+  find: FindState | null
   update: UpdateState
   clipsRoot: string // the folder pages saved for Claude go to
   extensions: ExtensionInfo[] // loaded in the active tab's profile

@@ -53,6 +53,7 @@ import type {
   Space,
   SpaceTheme,
   TabRuntime,
+  FindState,
   WriteState
 } from '@shared/types'
 import { accelerator, boostCss, boostMatches, clientHintsOf, firefoxUserAgent, frameColors, GOOGLE_SIGN_IN_HOSTS, hostOf, isEmptyBoost, normalizeAccelerator, sendsClientHints, siteOf, toNavigable, uid } from '@shared/util'
@@ -85,6 +86,7 @@ const BAR = 46 // bar layout: the top bar with spaces and the address
 const ROW = 38 // bar layout: the row of tabs under the top bar
 const AI_WIDTH = 380
 const RADIUS = 10
+const FIND_BAR_WIDTH = 384
 const MAC = process.platform === 'darwin'
 const MAX_AGENT_TURNS = 10 // earlier page agent turns kept in a conversation
 
@@ -102,6 +104,7 @@ const ACTIONS: ActionDef[] = [
   { id: 'settings', title: 'Settings', keywords: 'preferences options' },
   { id: 'archive', title: 'Archived tabs', keywords: 'closed' },
   { id: 'history', title: 'History', keywords: 'visited pages past' },
+  { id: 'find', title: 'Find in page', keywords: 'search text word ctrl f' },
   { id: 'downloads', title: 'Downloads', keywords: 'files saved' },
   { id: 'privateSpace', title: 'Private space (incognito)', keywords: 'incognito private window' },
   { id: 'toggleSidebar', title: 'Show or hide sidebar', keywords: 'focus compact' },
@@ -152,6 +155,11 @@ export class Browser {
   readonly agent: AgentHost
   readonly siteGuard = new SiteGuard(app.getPath('userData'))
   private guardStopped: { wcId: number; url: string } | null = null
+  find: FindState | null = null
+  private findWc: WebContents | null = null // the page being searched
+  private findRequest = 0 // only this search's answers count
+  private findText = '' // the last search, offered again when the bar reopens
+  private findKeepsKeyboard = false
   /** The client hints Chromium sends with subresources, added to page loads (see setupSession). */
   private clientHints: Record<string, string> | null = null
 
@@ -339,6 +347,7 @@ export class Browser {
       savePassword: this.savePrompt?.prompt ?? null,
       pageAgent: this.pageAgent,
       notice: this.notice,
+      find: this.find,
       update: this.updates.state,
       clipsRoot: this.clipsRoot(),
       ...this.extensionState(),
@@ -432,6 +441,7 @@ export class Browser {
   }
 
   layout(): void {
+    if (this.find && this.findWc !== this.findTarget()) this.closeFind() // another tab or space came to the front
     if (MAC) this.win.setWindowButtonPosition(this.trafficLights())
     const r = this.contentRect()
     this.ui.setBounds({ x: 0, y: 0, width: r.w, height: r.h })
@@ -461,7 +471,10 @@ export class Browser {
       const s = this.doc.settings
       const bar = s.layout === 'bar'
       this.overlay.setBounds(
-        this.overlayState.kind === 'notice'
+        this.overlayState.kind === 'find'
+          ? // The find bar: a strip in the page's top right corner, the rest of the page stays usable.
+            { x: Math.max(0, (full ? r.w : r.x + r.width) - FIND_BAR_WIDTH - 6), y: full ? 0 : r.y, width: Math.min(FIND_BAR_WIDTH, r.w), height: 58 }
+          : this.overlayState.kind === 'notice'
           ? // A strip at the bottom, above the page (the frame below the pages could not show it).
             { x: Math.max(8, Math.round(r.w / 2 - 290)), y: Math.max(0, r.h - 86), width: Math.min(580, r.w - 16), height: 76 }
           : small
@@ -694,8 +707,102 @@ export class Browser {
     void wc.loadURL(s.url).catch(() => {})
   }
 
+  // ---------- find in page ----------
+
+  /** The page in front: the peeked one when there is one, else the active tab. */
+  private findTarget(): WebContents | null {
+    if (this.overlayState?.kind === 'peek' && this.peekView) return this.peekView.webContents
+    const a = this.activeId()
+    return (a && this.views.get(a)?.webContents) || null
+  }
+
+  /** Ctrl+F: opens the bar, or gives it the keyboard back. The last search comes back selected and is run again. */
+  openFind(): void {
+    const kind = this.overlayState?.kind
+    if (kind && kind !== 'find' && kind !== 'notice' && kind !== 'peek') return // a dialog has the keyboard
+    const wc = this.findTarget()
+    if (!wc || wc.isDestroyed()) return
+    if (this.find && this.findWc === wc) {
+      this.find.tick++
+      this.overlay.webContents.focus()
+      return this.push()
+    }
+    this.stopFind()
+    this.findWc = wc
+    this.find = { text: this.findText, active: 0, matches: 0, done: false, tick: 1 }
+    if (kind === 'peek') {
+      this.overlay.webContents.focus() // the bar sits in the peek's header
+      this.push()
+    } else this.openOverlay('find')
+    if (this.findText) this.findQuery(this.findText)
+  }
+
+  /** A new search, or with `next` a step to the next match (`back`: the one before). */
+  findQuery(text: string, back = false, next = false): void {
+    const wc = this.findWc
+    if (!this.find || !wc || wc.isDestroyed()) return
+    this.findText = text
+    this.find.text = text
+    if (!next) Object.assign(this.find, { active: 0, matches: 0, done: false })
+    if (!text) {
+      this.findRequest = 0
+      wc.stopFindInPage('clearSelection')
+      return this.push()
+    }
+    this.findKeepsKeyboard = this.overlay.webContents.isFocused()
+    this.findRequest = wc.findInPage(text, { forward: !back, findNext: !next })
+    this.push()
+  }
+
+  /** F3 and Ctrl+G, wherever the keyboard is. */
+  private findStep(back: boolean): void {
+    if (!this.find) return this.openFind()
+    if (this.find.text) this.findQuery(this.find.text, back, true)
+  }
+
+  private stopFind(): void {
+    if (this.findWc && !this.findWc.isDestroyed()) this.findWc.stopFindInPage('keepSelection')
+    this.find = null
+    this.findWc = null
+    this.findRequest = 0
+  }
+
+  closeFind(): void {
+    if (!this.find) return
+    if (this.overlayState?.kind === 'find') return this.closeOverlay()
+    const wc = this.findWc
+    this.stopFind()
+    if (wc && !wc.isDestroyed()) wc.focus() // in a peek: back to the peeked page
+    this.push()
+  }
+
+  /** The page's answers to a search. A page that navigates away or goes away takes the bar with it. */
+  private watchFind(wc: WebContents): void {
+    wc.on('found-in-page', (_e, r) => {
+      if (!this.find || this.findWc !== wc || r.requestId !== this.findRequest) return
+      // Early answers can still say 0 while the page is being searched.
+      if (r.matches > 0 || r.finalUpdate) this.find.matches = r.matches
+      if (r.activeMatchOrdinal > 0 || r.finalUpdate) this.find.active = Math.max(0, r.activeMatchOrdinal)
+      if (r.finalUpdate) {
+        this.find.done = true
+        // Selecting a match can move the keyboard into the page, in the middle of typing.
+        if (this.findKeepsKeyboard) this.overlay.webContents.focus()
+      }
+      this.push()
+    })
+    wc.on('did-start-navigation', (d) => {
+      if (d.isMainFrame && !d.isSameDocument && this.findWc === wc) setImmediate(() => this.findWc === wc && this.closeFind())
+    })
+    wc.once('destroyed', () => {
+      if (this.findWc !== wc || this.win.isDestroyed()) return
+      this.findWc = null // nothing left to stop
+      this.closeFind()
+    })
+  }
+
   private wire(wc: WebContents, id: string): void {
     this.guard(wc)
+    this.watchFind(wc)
     const rt = () => this.runtime[id]
     const nav = () => {
       const r = rt()
@@ -1047,6 +1154,7 @@ export class Browser {
       this.push()
     }
     this.guard(wc)
+    this.watchFind(wc)
     wc.on('page-title-updated', (_e, title) => update({ title }))
     wc.on('did-navigate', (_e, u) => update({ url: u }))
     wc.on('did-navigate-in-page', (_e, u, main) => main && update({ url: u }))
@@ -1103,6 +1211,7 @@ export class Browser {
 
   private dropPeek(): void {
     const v = this.peekView
+    if (v && this.findWc === v.webContents) this.stopFind()
     this.peekView = null
     this.peek = null
     if (!v) return
@@ -1461,6 +1570,7 @@ export class Browser {
 
   openOverlay(kind: OverlayKind, payload?: OverlayState['payload']): void {
     if (this.overlayState?.kind === 'peek' && kind !== 'peek') this.dropPeek()
+    if (this.overlayState?.kind === 'find' && kind !== 'find') this.stopFind()
     if (this.overlayState?.kind === 'extension-install' && kind !== 'extension-install' && this.extensionAnswer) {
       this.extensionAnswer(false) // another dialog took its place: the store gets a cancel, not a hang
       this.extensionAnswer = null
@@ -1486,6 +1596,7 @@ export class Browser {
       this.answer = null
     }
     if (this.overlayState.kind === 'peek') this.dropPeek()
+    if (this.overlayState.kind === 'find') this.stopFind()
     if (this.overlayState.kind === 'extension-install' && this.extensionAnswer) {
       this.extensionAnswer(false)
       this.extensionAnswer = null
@@ -2170,6 +2281,14 @@ export class Browser {
     if (input.isComposing || input.key === 'Process') return
     const acc = MAC ? macShortcut(accelerator(input)) : accelerator(input)
     if (!acc) return
+    if (acc === 'Esc' && this.find) {
+      e.preventDefault()
+      return this.closeFind()
+    }
+    if (acc === 'F3' || acc === 'Shift+F3' || acc === 'Ctrl+G' || acc === 'Ctrl+Shift+G') {
+      e.preventDefault()
+      return this.findStep(acc.includes('Shift'))
+    }
     if (acc === 'Esc' && this.overlayState && this.overlayState.kind !== 'notice') {
       e.preventDefault()
       const c = this.overlayState.kind === 'confirm' ? this.agent.currentConfirm() : null
@@ -2214,6 +2333,8 @@ export class Browser {
     const a = this.activeId()
     const wc = a ? this.views.get(a)?.webContents : undefined
     switch (cmd) {
+      case 'find':
+        return this.openFind()
       case 'newTab':
         return this.overlayState?.kind === 'command' ? this.closeOverlay() : this.openOverlay('command', { mode: 'new' })
       case 'focusUrl':
@@ -2421,6 +2542,7 @@ export class Browser {
       { label: 'Back', enabled: wc.navigationHistory.canGoBack(), click: () => wc.navigationHistory.goBack() },
       { label: 'Forward', enabled: wc.navigationHistory.canGoForward(), click: () => wc.navigationHistory.goForward() },
       { label: 'Reload', click: () => wc.reload() },
+      { label: 'Find in page…', accelerator: this.doc.settings.shortcuts.find, click: () => this.openFind() },
       { type: 'separator' },
       ...(this.wcToItem.has(wc.id) && web ? [{ label: 'Boost this site…', click: () => this.openBoost() }] : []),
       ...(web ? [{ label: 'Save page for Claude', click: () => void this.saveForClaude(wc) }] : []),

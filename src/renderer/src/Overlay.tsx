@@ -1,6 +1,6 @@
 // Renderer #overlay: transparent view above the page for the command bar and dialogs.
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { Archive, ArrowRight, ChevronRight, Columns2, FolderOpen, Download, Globe, History, Info, Keyboard, KeyRound, Loader2, Puzzle, Search, Palette, ShieldCheck, SlidersHorizontal, Sparkles, SquareArrowOutUpRight, SquareTerminal, Trash2, Upload, X, Zap } from 'lucide-react'
+import { Archive, ArrowRight, ChevronDown, ChevronRight, ChevronUp, Columns2, FolderOpen, Download, Globe, History, Info, Keyboard, KeyRound, Loader2, Puzzle, Search, Palette, ShieldCheck, SlidersHorizontal, Sparkles, SquareArrowOutUpRight, SquareTerminal, Trash2, Upload, X, Zap } from 'lucide-react'
 import { APP_ICONS, COMMAND_LABELS, DEFAULT_SHORTCUTS, SEARCH_ENGINES, THEME_PRESETS } from '@shared/defaults'
 import type { AppIconId, AppState, ArcPreview, ArchivedItem, CommandId, CommandResult, ImportSummary, Space, SpaceTheme, Texture, ThemeMode, UpdateState } from '@shared/types'
 import { DEFAULT_SPACE_ICONS, SPACE_ICONS, isSpaceIcon } from '@shared/icons'
@@ -49,6 +49,7 @@ export function Overlay() {
   if (k === 'permission') return <PermissionCard s={s} />
   if (k === 'peek') return <PeekFrame s={s} />
   if (k === 'notice') return <NoticeToast s={s} />
+  if (k === 'find') return <div className="find-host"><FindBar s={s} /></div>
   if (k === 'save-password') return <SavePasswordCard s={s} />
   if (k === 'vault-unlock') return <VaultUnlockCard s={s} />
   const key = k + (s.overlay.payload?.tab ?? '') + (s.overlay.payload?.spaceId ?? '') + (s.overlay.payload?.mode ?? '')
@@ -101,6 +102,58 @@ function NoticeToast({ s, inDialog = false }: { s: AppState; inDialog?: boolean 
   )
 }
 
+// ---------- find in page ----------
+
+/** Ctrl+F. The main process searches the page (webContents.findInPage) and reports the count back. */
+function FindBar({ s }: { s: AppState }) {
+  const f = s.find
+  const input = useRef<HTMLInputElement>(null)
+  const [text, setText] = useState(f?.text ?? '')
+  useEffect(() => {
+    input.current?.focus()
+    input.current?.select()
+  }, [f?.tick])
+  if (!f) return null
+  const step = (back: boolean) => {
+    if (text) call('findQuery', text, back, true)
+  }
+  const none = !!text && f.done && f.matches === 0
+  return (
+    <div className={'find-bar' + (none ? ' none' : '')} role="search" onMouseDown={(e) => e.stopPropagation()}>
+      <Search size={14} aria-hidden />
+      <input
+        ref={input}
+        value={text}
+        placeholder="Find in page"
+        aria-label="Find in page"
+        spellCheck={false}
+        onChange={(e) => {
+          setText(e.target.value)
+          call('findQuery', e.target.value)
+        }}
+        onKeyDown={(e) => {
+          if (e.key !== 'Enter' || composing(e)) return
+          e.preventDefault()
+          step(e.shiftKey)
+        }}
+      />
+      <span className="find-count" aria-live="polite">
+        {none ? 'No results' : f.matches > 0 ? `${f.active} of ${f.matches}` : ''}
+      </span>
+      {/* mouse down would take the keyboard away from the field */}
+      <button className="icon-btn" title="Previous (Shift+Enter)" aria-label="Previous match" disabled={!f.matches} onMouseDown={(e) => e.preventDefault()} onClick={() => step(true)}>
+        <ChevronUp size={15} />
+      </button>
+      <button className="icon-btn" title="Next (Enter)" aria-label="Next match" disabled={!f.matches} onMouseDown={(e) => e.preventDefault()} onClick={() => step(false)}>
+        <ChevronDown size={15} />
+      </button>
+      <button className="icon-btn" title="Close (Esc)" aria-label="Close find" onClick={() => call('closeFind')}>
+        <X size={15} />
+      </button>
+    </div>
+  )
+}
+
 // ---------- peek ----------
 
 /** The card around a peeked page (the page itself is a view the main process lays inside it). */
@@ -114,8 +167,9 @@ function PeekFrame({ s }: { s: AppState }) {
         <header className="peek-bar">
           {p.loading ? <Loader2 size={14} className="spin" aria-label="Loading" /> : <Globe size={14} aria-hidden />}
           <span className="ellipsis peek-title">{p.title || hostOf(p.url)}</span>
-          <span className="ellipsis fine">{hostOf(p.url)}</span>
+          {!s.find && <span className="ellipsis fine">{hostOf(p.url)}</span>}
           <span className="grow" />
+          {s.find && <FindBar s={s} />}
           <button className="icon-btn" title="Open in split view" aria-label="Open in split view" onClick={() => call('promotePeek', true)}>
             <Columns2 size={15} />
           </button>

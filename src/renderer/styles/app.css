@@ -3054,6 +3054,73 @@ input[type='range'] {
   background: var(--color-surface-2);
   color: var(--color-text);
 }
+/* Find in page: a strip in the page's top right corner, or in the header of a peek. */
+.find-host {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 8px 8px 0 0;
+  pointer-events: none;
+}
+.find-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 38px;
+  padding: 0 5px 0 12px;
+  border-radius: 11px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.24), 0 0 0 1px var(--color-border);
+  font-size: var(--text-sm);
+  pointer-events: auto;
+  animation: find-in 140ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+.find-bar > svg {
+  flex: none;
+  margin-right: 7px;
+  color: var(--color-text-muted);
+}
+.find-bar input {
+  flex: 1;
+  min-width: 0;
+  width: 150px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.find-bar input::placeholder {
+  color: var(--color-text-muted);
+}
+.find-count {
+  flex: none;
+  margin: 0 6px;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.find-bar.none {
+  background: color-mix(in srgb, var(--color-danger, #d13438) 16%, var(--color-surface));
+}
+.find-bar.none .find-count {
+  color: var(--color-text);
+}
+.peek-bar .find-bar {
+  height: 30px;
+  box-shadow: 0 0 0 1px var(--color-border);
+  animation: none;
+}
+@keyframes find-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
 @keyframes notice-in {
   from {
     opacity: 0;

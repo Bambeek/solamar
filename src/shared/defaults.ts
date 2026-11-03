@@ -28,7 +28,8 @@ export const DEFAULT_SHORTCUTS: Record<CommandId, string> = {
   zoomIn: 'Ctrl+=',
   zoomOut: 'Ctrl+-',
   zoomReset: 'Ctrl+0',
-  devtools: 'F12'
+  devtools: 'F12',
+  find: 'Ctrl+F'
 }
 
 export const COMMAND_LABELS: Record<CommandId, string> = {
@@ -59,7 +60,8 @@ export const COMMAND_LABELS: Record<CommandId, string> = {
   zoomIn: 'Zoom in',
   zoomOut: 'Zoom out',
   zoomReset: 'Reset zoom',
-  devtools: 'Developer tools'
+  devtools: 'Developer tools',
+  find: 'Find in page'
 }
 
 export const DEFAULT_SETTINGS: Settings = {
